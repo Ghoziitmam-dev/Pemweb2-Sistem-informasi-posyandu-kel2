@@ -32,19 +32,36 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'nik' => ['required', 'digits:16'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.\App\Models\User::class],
+            'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
+        $warga = \App\Models\Warga::where('nik', $request->nik)->first();
+
+        if (! $warga) {
+            return back()->withInput()->withErrors([
+                'nik' => 'NIK belum terdaftar di Posyandu. Silakan hubungi kader.',
+            ]);
+        }
+
+        if ($warga->user) {
+            return back()->withInput()->withErrors([
+                'nik' => 'NIK ini sudah terhubung dengan akun lain.',
+            ]);
+        }
+
+        $user = \App\Models\User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+            'role' => 'warga',
+            'warga_id' => $warga->id,
         ]);
 
-        event(new Registered($user));
+        event(new \Illuminate\Auth\Events\Registered($user));
 
-        Auth::login($user);
+        \Illuminate\Support\Facades\Auth::login($user);
 
         return redirect(route('dashboard', absolute: false));
     }
