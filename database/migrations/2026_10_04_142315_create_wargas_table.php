@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('wargas', function (Blueprint $table) {
             $table->id();
-            $table->string('nik', 16)->unique();
+            $table->string('nik', 16)->index();
             $table->string('nama');
             $table->date('tanggal_lahir');
             $table->enum('jenis_kelamin', ['L', 'P']);
