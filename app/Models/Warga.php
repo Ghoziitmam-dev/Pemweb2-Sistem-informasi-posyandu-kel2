@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Warga extends Model
 {
@@ -44,5 +45,10 @@ class Warga extends Model
             $umur < 60 => 'dewasa',
             default => 'lansia',
         };
+    }
+    public function jadwals(): BelongsToMany
+    {
+        return $this->belongsToMany(Jadwal::class, 'pendaftarans')
+            ->withPivot('status')->withTimestamps();
     }
 }
