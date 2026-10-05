@@ -48,7 +48,7 @@ class DatabaseSeeder extends Seeder
                 'no_hp' => '081234567890',
             ]);
         }
-
+        Warga::factory()->count(15)->create();
         $penimbangan = Kegiatan::create([
             'judul' => 'Penimbangan Balita',
             'jenis' => 'penimbangan',
