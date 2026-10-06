@@ -3,69 +3,106 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Masuk · Posyandu</title>
+    <title>Masuk · Posyandu Digital</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>[x-cloak]{display:none !important}</style>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; }
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
-<body class="flex min-h-screen items-center justify-center bg-slate-50 px-4 text-slate-800 antialiased">
+<body class="bg-[#DAF1DE] text-[#051F20] antialiased">
 
-<div class="w-full max-w-sm"
-     x-data="{
-        email: '', password: '', loading: false, error: '', fieldErrors: {},
-        async submit() {
-            this.loading = true; this.error = ''; this.fieldErrors = {};
-            try {
-                const res = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: this.email, password: this.password }),
-                });
-                const json = await res.json().catch(() => ({}));
+<div class="grid min-h-screen lg:grid-cols-2">
 
-                if (!res.ok) {
-                    if (res.status === 422) this.fieldErrors = json.errors ?? {};
-                    else this.error = json.message ?? 'Terjadi kesalahan.';
-                    return;
-                }
-                auth.set(json.data.token);
-                window.location.href = '/jadwal';
-            } catch (e) {
-                this.error = 'Tidak dapat terhubung ke server.';
-            } finally { this.loading = false; }
-        }
-     }"
-     x-init="if (auth.token()) window.location.href = '/jadwal'">
-
-    <div class="mb-6 text-center">
-        <span class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-600 text-2xl font-bold text-white">P</span>
-        <h1 class="text-2xl font-bold tracking-tight text-slate-900">Masuk ke Posyandu</h1>
-        <p class="mt-1 text-sm text-slate-500">Gunakan akun yang sudah terdaftar.</p>
-    </div>
-
-    <form @submit.prevent="submit()" class="space-y-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div x-show="error" x-cloak class="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700" x-text="error"></div>
-
+    {{-- Panel informasi (desktop) --}}
+    <aside class="hidden flex-col justify-between bg-[#0B2B26] p-12 text-[#DAF1DE] lg:flex">
+        <a href="{{ route('home') }}" class="flex items-center gap-2 font-bold">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#8EB69B] text-[#051F20]">P</span>
+            Posyandu Digital
+        </a>
         <div>
-            <label class="block text-sm font-medium text-slate-700">Email</label>
-            <input type="email" x-model="email" required autofocus
-                   class="mt-1 block w-full rounded-lg border border-slate-300 text-sm shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
-            <p class="mt-1 text-xs text-rose-600" x-show="fieldErrors.email" x-text="fieldErrors.email?.[0]"></p>
+            <h2 class="max-w-md text-4xl font-extrabold leading-tight tracking-tight">Catatan kesehatan warga, rapi di satu tempat.</h2>
+            <ul class="mt-8 max-w-sm space-y-4 text-[#8EB69B]">
+                <li class="flex gap-3"><span class="text-[#DAF1DE]">✓</span>Lihat jadwal dan daftar kegiatan Posyandu</li>
+                <li class="flex gap-3"><span class="text-[#DAF1DE]">✓</span>Pantau riwayat pemeriksaan sendiri</li>
+                <li class="flex gap-3"><span class="text-[#DAF1DE]">✓</span>Kader mencatat hasil tanpa buku kertas</li>
+            </ul>
         </div>
+        <p class="text-sm text-[#8EB69B]">Proyek Praktikum Pemrograman Web II</p>
+    </aside>
 
-        <div>
-            <label class="block text-sm font-medium text-slate-700">Password</label>
-            <input type="password" x-model="password" required
-                   class="mt-1 block w-full rounded-lg border border-slate-300 text-sm shadow-sm focus:border-emerald-500 focus:ring-emerald-500">
-            <p class="mt-1 text-xs text-rose-600" x-show="fieldErrors.password" x-text="fieldErrors.password?.[0]"></p>
+    {{-- Form --}}
+    <main class="flex items-center justify-center px-4 py-10"
+          x-data="{
+            email: '', password: '', show: false, loading: false, error: '', fieldErrors: {},
+            async submit() {
+                this.loading = true; this.error = ''; this.fieldErrors = {};
+                try {
+                    const res = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: this.email, password: this.password }),
+                    });
+                    const json = await res.json().catch(() => ({}));
+                    if (!res.ok) {
+                        if (res.status === 422) this.fieldErrors = json.errors ?? {};
+                        else this.error = json.message ?? 'Terjadi kesalahan.';
+                        return;
+                    }
+                    auth.set(json.data.token);
+                    window.location.href = '/jadwal';
+                } catch (e) {
+                    this.error = 'Tidak dapat terhubung ke server.';
+                } finally { this.loading = false; }
+            }
+          }"
+          x-init="if (auth.token()) window.location.href = '/jadwal'">
+
+        <div class="w-full max-w-sm">
+            <a href="{{ route('home') }}" class="mb-8 flex items-center gap-2 font-bold text-[#0B2B26] lg:hidden">
+                <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#235347] text-white">P</span>
+                Posyandu Digital
+            </a>
+
+            <h1 class="text-3xl font-extrabold tracking-tight text-[#0B2B26]">Masuk</h1>
+            <p class="mt-2 text-sm text-[#163832]">Gunakan email dan password akun Anda.</p>
+
+            <form @submit.prevent="submit()" class="mt-8 space-y-5">
+                <div x-show="error" x-cloak role="alert" class="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700 ring-1 ring-rose-200" x-text="error"></div>
+
+                <div>
+                    <label for="email" class="block text-sm font-semibold text-[#163832]">Email</label>
+                    <input id="email" type="email" x-model="email" required autofocus autocomplete="email"
+                           class="mt-1.5 block w-full rounded-xl border-[#8EB69B] bg-white/80 text-sm shadow-sm focus:border-[#235347] focus:ring-[#235347]">
+                    <p class="mt-1 text-xs text-rose-600" x-show="fieldErrors.email" x-text="fieldErrors.email?.[0]"></p>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-semibold text-[#163832]">Password</label>
+                    <div class="relative mt-1.5">
+                        <input id="password" :type="show ? 'text' : 'password'" x-model="password" required autocomplete="current-password"
+                               class="block w-full rounded-xl border-[#8EB69B] bg-white/80 pr-16 text-sm shadow-sm focus:border-[#235347] focus:ring-[#235347]">
+                        <button type="button" @click="show = !show"
+                                class="absolute inset-y-0 right-3 text-xs font-semibold text-[#235347] hover:text-[#0B2B26]"
+                                x-text="show ? 'Sembunyi' : 'Lihat'"></button>
+                    </div>
+                    <p class="mt-1 text-xs text-rose-600" x-show="fieldErrors.password" x-text="fieldErrors.password?.[0]"></p>
+                </div>
+
+                <button :disabled="loading"
+                        class="w-full rounded-xl bg-[#163832] py-3 text-sm font-bold text-[#DAF1DE] transition hover:bg-[#0B2B26] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#235347] focus-visible:ring-offset-2 disabled:opacity-60">
+                    <span x-text="loading ? 'Memproses...' : 'Masuk'"></span>
+                </button>
+            </form>
+
+            <p class="mt-6 text-center text-sm text-[#163832]">
+                Warga baru? <a href="{{ route('register') }}" class="font-semibold text-[#235347] underline underline-offset-2 hover:text-[#0B2B26]">Daftar dengan NIK</a>
+            </p>
         </div>
-
-        <button :disabled="loading"
-                class="w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60">
-            <span x-text="loading ? 'Memproses...' : 'Masuk'"></span>
-        </button>
-
-        <p class="text-center text-sm text-slate-500">Belum punya akun? <a href="{{ route('register') }}" class="font-medium text-emerald-700 hover:underline">Daftar</a></p>
-    </form>
+    </main>
 </div>
 </body>
 </html>
