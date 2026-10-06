@@ -2,9 +2,9 @@
 
 use App\Models\{Jadwal, Kegiatan, Warga};
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\JadwalController;
+use App\Http\Controllers\Api\JadwalController;
 use App\Http\Controllers\KegiatanController;
-
+use App\Http\Controllers\PemeriksaanController;
 
 Route::get('/', function () {
     $jadwals = Jadwal::with('kegiatan')
@@ -40,7 +40,7 @@ Route::resource('jadwal', JadwalController::class)
 
 Route::resource('kegiatan', KegiatanController::class);
 
-
+Route::resource('pemeriksaan', PemeriksaanController::class);
 
 Route::view('/login', 'auth.login')->name('login');
 
