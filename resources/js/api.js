@@ -32,3 +32,16 @@ export async function api(path, { method = 'GET', body, params } = {}) {
 
     return json;
 }
+
+let meCache = null;
+
+export function getMe() {
+    meCache ??= api('/auth/me')
+        .then((r) => r.data)
+        .catch((e) => { meCache = null; throw e; });
+    return meCache;
+}
+
+export function toast(message, type = 'success') {
+    window.dispatchEvent(new CustomEvent('toast', { detail: { message, type } }));
+}
