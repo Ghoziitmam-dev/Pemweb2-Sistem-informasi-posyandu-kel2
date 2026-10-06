@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JadwalController;
+use App\Http\Controllers\KegiatanController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,6 +23,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('jadwal', JadwalController::class)->except(['index', 'show']);
     });
     Route::resource('jadwal', JadwalController::class)->only(['index', 'show']);
+    Route::resource('kegiatan', KegiatanController::class);
 });
 
 require __DIR__.'/auth.php';
