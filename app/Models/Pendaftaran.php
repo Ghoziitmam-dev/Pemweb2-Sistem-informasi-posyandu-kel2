@@ -11,6 +11,8 @@ class Pendaftaran extends Model
 
     protected $casts = ['dikonfirmasi_at' => 'datetime'];
 
+    public const AKTIF = ['terdaftar', 'hadir'];
+
     public function warga(): BelongsTo
     {
         return $this->belongsTo(Warga::class)->withTrashed();

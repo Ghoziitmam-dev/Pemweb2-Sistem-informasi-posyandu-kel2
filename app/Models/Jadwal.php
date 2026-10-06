@@ -16,6 +16,13 @@ class Jadwal extends Model
 
     protected $casts = ['tanggal' => 'date'];
 
+    public const STATUS = [
+        'akan_datang' => 'Akan Datang',
+        'berlangsung' => 'Berlangsung',
+        'selesai' => 'Selesai',
+        'batal' => 'Batal',
+    ];
+
     public function kegiatan(): BelongsTo
     {
         return $this->belongsTo(Kegiatan::class);
