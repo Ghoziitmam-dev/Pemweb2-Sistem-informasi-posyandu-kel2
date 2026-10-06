@@ -10,11 +10,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-<<<<<<< Updated upstream
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
-=======
 
 Route::resource('jadwal', JadwalController::class)
     ->only(['index', 'show']);
@@ -29,7 +27,6 @@ Route::view('/register', 'auth.register')->name('register');
 
 Route::redirect('/dashboard', '/jadwal')
     ->name('dashboard');
->>>>>>> Stashed changes
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
