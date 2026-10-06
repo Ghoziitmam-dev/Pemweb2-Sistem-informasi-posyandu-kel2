@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
@@ -9,12 +10,59 @@
                class="px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700">
                 + Tambah Kegiatan
             </a>
+=======
+<x-layouts.panel title="Kegiatan">
+
+<div x-data="{ user:null }"
+     x-init="
+        getMe()
+        .then(u => user=u)
+        .catch(e => console.log('ME ERROR', e))
+     ">
+
+
+@php
+    $btn = 'inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-xs font-medium transition';
+    $primary = $btn.' bg-emerald-600 text-white hover:bg-emerald-700';
+    $ghost = $btn.' border border-slate-200 text-slate-600 hover:bg-slate-50';
+    $input = 'rounded-lg border border-slate-300 text-sm shadow-sm focus:border-emerald-500 focus:ring-emerald-500';
+@endphp
+
+
+
+<div>
+
+
+    {{-- Header --}}
+    <div class="mb-6 flex items-end justify-between">
+
+
+        <div>
+
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900">
+                Kegiatan Posyandu
+            </h1>
+
+
+            <p class="mt-1 text-sm text-slate-500">
+               Kelola daftar kegiatan Posyandu.
+            </p>
+
         </div>
     </x-slot>
 
-
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+        {{-- ADMIN ONLY --}}
+        <div x-show="user?.role === 'admin'" x-cloak>
+
+            <a href="{{ route('kegiatan.create') }}"
+               class="{{ $primary }}">
+                + Tambah Kegiatan
+            </a>
+
+        </div>
 
             @if(session('success'))
                 <div class="mb-4 p-3 bg-green-100 text-green-700 rounded">
@@ -45,6 +93,12 @@
                 </select>
 
 
+    {{-- Filter --}}
+    <form method="GET"
+          class="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+
+
+
                 <button class="px-4 py-2 bg-gray-800 text-white rounded-md">
                     Filter
                 </button>
@@ -73,11 +127,111 @@
 
                         <tr>
 
+
                             <td class="px-4 py-3 font-medium">
+
+                <option value="">
+                    Semua status
+                </option>
+
+
+                @foreach($statuses as $key=>$label)
+
+                    <option value="{{ $key }}"
+                        {{ request('status') == $key ? 'selected' : '' }}>
+
+                        {{ $label }}
+
+                    </option>
+
+                @endforeach
+
+
+            </select>
+
+
+        </div>
+
+
+
+        <button class="{{ $primary }} mt-4">
+            Filter
+        </button>
+
+
+    </form>
+
+
+
+
+
+
+    {{-- Table --}}
+    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+
+        <div class="overflow-x-auto">
+
+
+            <table class="min-w-full text-sm">
+
+
+                <thead class="bg-slate-50 text-left text-slate-600">
+
+
+                    <tr>
+
+                        <th class="px-5 py-4 font-semibold">
+                            Judul
+                        </th>
+
+
+                        <th class="px-5 py-4 font-semibold">
+                            Jenis
+                        </th>
+
+
+                        <th class="px-5 py-4 font-semibold">
+                            Target Peserta
+                        </th>
+
+
+                        <th class="px-5 py-4 font-semibold">
+                            Status
+                        </th>
+
+
+                        <th class="px-5 py-4 text-right font-semibold">
+                            Aksi
+                        </th>
+
+                    </tr>
+
+
+                </thead>
+
+
+
+
+                <tbody class="divide-y divide-slate-100">
+
+
+                @forelse($kegiatans as $kegiatan)
+
+
+                    <tr class="hover:bg-slate-50">
+
+
+                        <td class="px-5 py-4">
+
+
+                            <p class="font-semibold text-slate-900">
+>>>>>>> Stashed changes
                                 {{ $kegiatan->judul }}
                             </td>
 
 
+<<<<<<< Updated upstream
                             <td class="px-4 py-3">
                                 {{ $kegiatan->jenis }}
                             </td>
@@ -86,10 +240,29 @@
                             <td class="px-4 py-3">
                                 {{ $kegiatan->target_peserta ?? '-' }}
                             </td>
+=======
+                            <p class="mt-1 text-xs text-slate-500">
+                                {{ $kegiatan->deskripsi ?? '-' }}
+                            </p>
+
+
+                        </td>
+
+
+
+
+
+                        <td class="px-5 py-4 text-slate-600">
+
+                            {{ ucfirst($kegiatan->jenis) }}
+
+                        </td>
+>>>>>>> Stashed changes
 
 
                             <td class="px-4 py-3">
 
+<<<<<<< Updated upstream
                                 @if($kegiatan->status == 'aktif')
                                     <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">
                                         Aktif
@@ -101,10 +274,20 @@
                                 @endif
 
                             </td>
+=======
+
+
+                        <td class="px-5 py-4 text-slate-600">
+
+                            {{ $kegiatan->target_peserta ?? '-' }}
+
+                        </td>
+>>>>>>> Stashed changes
 
 
                             <td class="px-4 py-3 text-right">
 
+<<<<<<< Updated upstream
                                 <a href="{{ route('kegiatan.show',$kegiatan) }}"
                                    class="text-indigo-600 hover:underline">
                                     Detail
@@ -115,12 +298,28 @@
                                    class="ml-3 text-yellow-600 hover:underline">
                                     Edit
                                 </a>
+=======
+
+
+                        <td class="px-5 py-4">
+
+
+                            @if($kegiatan->status == 'aktif')
+
+
+                                <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+
+                                    Aktif
+
+                                </span>
+>>>>>>> Stashed changes
 
 
                                 <form action="{{ route('kegiatan.destroy',$kegiatan) }}"
                                       method="POST"
                                       class="inline">
 
+<<<<<<< Updated upstream
                                     @csrf
                                     @method('DELETE')
 
@@ -130,6 +329,14 @@
                                     </button>
 
                                 </form>
+=======
+
+                                <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+
+                                    Nonaktif
+
+                                </span>
+>>>>>>> Stashed changes
 
 
                             </td>
@@ -156,12 +363,128 @@
             </div>
 
 
+<<<<<<< Updated upstream
             <div class="mt-4">
                 {{ $kegiatans->links() }}
             </div>
+=======
+
+                        <td class="px-5 py-4 text-right">
+
+
+                            {{-- Semua role --}}
+                            <a href="{{ route('kegiatan.show',$kegiatan) }}"
+                               class="{{ $ghost }}">
+
+                                Detail
+
+                            </a>
+
+
+
+
+
+                            {{-- ADMIN ONLY --}}
+                            <div x-show="user?.role === 'admin'"
+                                 x-cloak
+                                 class="inline">
+
+
+                                <a href="{{ route('kegiatan.edit',$kegiatan) }}"
+                                   class="{{ $ghost }} ml-2">
+
+                                    Edit
+
+                                </a>
+
+
+
+
+
+                                <form action="{{ route('kegiatan.destroy',$kegiatan) }}"
+                                      method="POST"
+                                      class="inline">
+
+
+                                    @csrf
+                                    @method('DELETE')
+
+
+                                    <button
+                                        onclick="return confirm('Hapus kegiatan?')"
+                                        class="ml-2 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-100">
+
+
+                                        Hapus
+
+
+                                    </button>
+
+
+                                </form>
+
+
+                            </div>
+
+
+
+                        </td>
+
+
+                    </tr>
+
+
+
+                @empty
+
+
+                    <tr>
+
+                        <td colspan="5"
+                            class="px-5 py-10 text-center text-slate-500">
+
+                            Belum ada kegiatan.
+
+                        </td>
+
+
+                    </tr>
+
+
+                @endforelse
+
+
+
+                </tbody>
+
+
+            </table>
+>>>>>>> Stashed changes
 
 
         </div>
     </div>
 
+<<<<<<< Updated upstream
 </x-app-layout>
+=======
+
+
+
+
+    <div class="mt-6">
+
+        {{ $kegiatans->links() }}
+
+    </div>
+
+
+
+</div>
+
+
+</div>
+
+
+</x-layouts.panel>
+>>>>>>> Stashed changes
