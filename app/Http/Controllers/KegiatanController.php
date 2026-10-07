@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kegiatan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class KegiatanController extends Controller
 {
@@ -52,11 +53,22 @@ class KegiatanController extends Controller
             'jenis' => ['required', 'string', 'max:255'],
             'deskripsi' => ['nullable', 'string'],
             'target_peserta' => ['nullable', 'string', 'max:255'],
-            'foto' => ['nullable', 'string', 'max:255'],
+            'foto' => ['nullable', 'image', 'max:2048'],
             'status' => ['required', 'in:aktif,nonaktif'],
         ]);
 
+
+        // Upload foto
+        if ($request->hasFile('foto')) {
+
+            $data['foto'] = $request->file('foto')
+                ->store('kegiatan', 'public');
+
+        }
+
+
         Kegiatan::create($data);
+
 
         return redirect()
             ->route('kegiatan.index')
@@ -83,11 +95,36 @@ class KegiatanController extends Controller
             'jenis' => ['required', 'string', 'max:255'],
             'deskripsi' => ['nullable', 'string'],
             'target_peserta' => ['nullable', 'string', 'max:255'],
-            'foto' => ['nullable', 'string', 'max:255'],
+            'foto' => ['nullable', 'image', 'max:2048'],
             'status' => ['required', 'in:aktif,nonaktif'],
         ]);
 
+
+
+        // Jika upload foto baru
+        if ($request->hasFile('foto')) {
+
+
+            // hapus foto lama
+            if ($kegiatan->foto) {
+
+                Storage::disk('public')
+                    ->delete($kegiatan->foto);
+
+            }
+
+
+            // simpan foto baru
+            $data['foto'] = $request->file('foto')
+                ->store('kegiatan', 'public');
+
+        }
+
+
+
         $kegiatan->update($data);
+
+
 
         return redirect()
             ->route('kegiatan.index')
@@ -97,7 +134,18 @@ class KegiatanController extends Controller
 
     public function destroy(Kegiatan $kegiatan)
     {
+
+        // hapus file foto saat kegiatan dihapus
+        if ($kegiatan->foto) {
+
+            Storage::disk('public')
+                ->delete($kegiatan->foto);
+
+        }
+
+
         $kegiatan->delete();
+
 
         return redirect()
             ->route('kegiatan.index')
