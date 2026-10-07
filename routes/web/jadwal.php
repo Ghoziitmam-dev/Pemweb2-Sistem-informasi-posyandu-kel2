@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\Api\JadwalController;
+use App\Models\{Jadwal, Kegiatan, Warga};
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {

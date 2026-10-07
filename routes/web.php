@@ -4,12 +4,8 @@ use App\Models\{Jadwal, Kegiatan, Warga};
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\JadwalController;
 use App\Http\Controllers\KegiatanController;
-<<<<<<< HEAD
 use App\Http\Controllers\PemeriksaanController;
-=======
 use App\Http\Controllers\ProfileController;
-
->>>>>>> upstream/main
 
 Route::get('/', function () {
     $jadwals = Jadwal::with('kegiatan')
