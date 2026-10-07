@@ -15,7 +15,7 @@
     </style>
 </head>
 {{-- Palet: ink #051F20 · deep #0B2B26 · forest #163832 · moss #235347 · sage #8EB69B · mist #DAF1DE --}}
-<body class="bg-[#DAF1DE] text-[#051F20] antialiased">
+<body class="overflow-x-hidden bg-[#DAF1DE] text-[#051F20] antialiased">
 
 {{-- Navbar --}}
 <header x-data="{ open: false }" class="sticky top-0 z-30 bg-[#DAF1DE]/90 backdrop-blur">
@@ -51,26 +51,26 @@
 
 {{-- Hero --}}
 <section class="bg-[#0B2B26] text-[#DAF1DE]">
-    <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 md:py-24">
+    <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:gap-14 lg:py-20">
         <div>
-            <h1 class="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">Kesehatan warga tercatat rapi, jadwal Posyandu mudah dicari.</h1>
+            <h1 class="text-3xl font-bold leading-snug sm:text-4xl lg:text-5xl lg:leading-tight">Kesehatan warga tercatat rapi, jadwal Posyandu mudah dicari.</h1>
             <p class="mt-5 max-w-md text-[#8EB69B]">Kader mencatat pemeriksaan dalam satu sistem. Warga mendaftar kegiatan dan melihat riwayat kesehatannya sendiri dari ponsel.</p>
             <div class="mt-8 flex flex-wrap gap-3">
-                <a href="{{ route('register') }}" class="rounded-xl bg-[#8EB69B] px-6 py-3 text-sm font-bold text-[#051F20] hover:bg-[#DAF1DE]">Daftar sebagai warga</a>
-                <a href="#jadwal" class="rounded-xl border border-[#8EB69B]/60 px-6 py-3 text-sm font-semibold hover:bg-[#163832]">Lihat jadwal</a>
+                <a href="{{ route('register') }}" class="flex-1 rounded-xl bg-[#8EB69B] px-6 py-3 text-center text-sm font-bold sm:flex-none text-[#051F20] hover:bg-[#DAF1DE]">Daftar sebagai warga</a>
+                <a href="#jadwal" class="flex-1 rounded-xl border border-[#8EB69B]/60 px-6 py-3 text-center text-sm font-semibold sm:flex-none hover:bg-[#163832]">Lihat jadwal</a>
             </div>
         </div>
 
         {{-- Kartu jadwal terdekat (data nyata) --}}
-        <div class="rounded-3xl bg-[#163832] p-6 shadow-2xl ring-1 ring-[#235347]">
+        <div class="rounded-3xl bg-[#163832] p-5 shadow-2xl sm:p-6 ring-1 ring-[#235347]">
             <p class="text-sm font-semibold text-[#8EB69B]">Jadwal terdekat</p>
             @php $next = $jadwals->first(); @endphp
             @if ($next)
                 <h2 class="mt-2 text-2xl font-bold">{{ $next->kegiatan->judul }}</h2>
                 <dl class="mt-5 space-y-3 text-sm">
-                    <div class="flex justify-between border-b border-[#235347] pb-3"><dt class="text-[#8EB69B]">Tanggal</dt><dd class="font-semibold">{{ $next->tanggal->translatedFormat('l, d F Y') }}</dd></div>
-                    <div class="flex justify-between border-b border-[#235347] pb-3"><dt class="text-[#8EB69B]">Waktu</dt><dd class="font-semibold">{{ substr($next->jam_mulai, 0, 5) }} - {{ substr($next->jam_selesai, 0, 5) }} WIB</dd></div>
-                    <div class="flex justify-between"><dt class="text-[#8EB69B]">Lokasi</dt><dd class="font-semibold">{{ $next->lokasi }}</dd></div>
+                    <div class="flex flex-col gap-1 border-b border-[#235347] pb-3 sm:flex-row sm:justify-between sm:gap-4"><dt class="text-[#8EB69B]">Tanggal</dt><dd class="font-semibold sm:text-right">{{ $next->tanggal->locale('id')->translatedFormat('l, d F Y') }}</dd></div>
+                    <div class="flex flex-col gap-1 border-b border-[#235347] pb-3 sm:flex-row sm:justify-between sm:gap-4"><dt class="text-[#8EB69B]">Waktu</dt><dd class="font-semibold sm:text-right">{{ substr($next->jam_mulai, 0, 5) }} - {{ substr($next->jam_selesai, 0, 5) }} WIB</dd></div>
+                    <div class="flex flex-col gap-1 sm:flex-row sm:justify-between sm:gap-4"><dt class="text-[#8EB69B]">Lokasi</dt><dd class="font-semibold sm:text-right">{{ $next->lokasi }}</dd></div>
                 </dl>
                 <a href="{{ route('login') }}" class="mt-6 block rounded-xl bg-[#DAF1DE] py-3 text-center text-sm font-bold text-[#0B2B26] hover:bg-[#8EB69B]">Masuk untuk mendaftar</a>
             @else
@@ -84,15 +84,15 @@
 {{-- Statistik (angka dari database) --}}
 <section class="border-b border-[#8EB69B]/50">
     <dl class="mx-auto grid max-w-6xl grid-cols-3 gap-4 px-4 py-8 text-center sm:px-6">
-        <div><dd class="text-3xl font-extrabold text-[#235347]">{{ $stat['warga'] }}</dd><dt class="text-sm text-[#163832]">Warga terdata</dt></div>
-        <div><dd class="text-3xl font-extrabold text-[#235347]">{{ $stat['kegiatan'] }}</dd><dt class="text-sm text-[#163832]">Kegiatan aktif</dt></div>
-        <div><dd class="text-3xl font-extrabold text-[#235347]">{{ $stat['jadwal'] }}</dd><dt class="text-sm text-[#163832]">Jadwal mendatang</dt></div>
+        <div><dd class="text-2xl font-extrabold text-[#235347] sm:text-3xl">{{ $stat['warga'] }}</dd><dt class="text-sm text-[#163832]">Warga terdata</dt></div>
+        <div><dd class="text-2xl font-extrabold text-[#235347] sm:text-3xl">{{ $stat['kegiatan'] }}</dd><dt class="text-sm text-[#163832]">Kegiatan aktif</dt></div>
+        <div><dd class="text-2xl font-extrabold text-[#235347] sm:text-3xl">{{ $stat['jadwal'] }}</dd><dt class="text-sm text-[#163832]">Jadwal mendatang</dt></div>
     </dl>
 </section>
 
 {{-- Layanan --}}
-<section id="layanan" class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-    <h2 class="text-3xl font-bold text-[#0B2B26]">Layanan yang tersedia</h2>
+<section id="layanan" class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+    <h2 class="text-2xl font-bold text-[#0B2B26] sm:text-3xl">Layanan yang tersedia</h2>
     <p class="mt-2 max-w-xl text-[#163832]">Setiap kegiatan punya jadwal, kuota, dan catatan pemeriksaan sendiri.</p>
     <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         @foreach ([
@@ -115,7 +115,7 @@
 {{-- Alur --}}
 <section id="alur" class="bg-[#163832] text-[#DAF1DE]">
     <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <h2 class="text-3xl font-bold">Empat langkah, tanpa antre di buku catatan</h2>
+        <h2 class="text-2xl font-bold sm:text-3xl">Empat langkah, tanpa antre di buku catatan</h2>
         <ol class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             @foreach ([
                 ['Didata kader', 'Kader mendaftarkan data warga dengan NIK.'],
@@ -134,8 +134,8 @@
 </section>
 
 {{-- Manfaat per peran --}}
-<section id="peran" class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-    <h2 class="text-3xl font-bold text-[#0B2B26]">Dibuat untuk tiga peran</h2>
+<section id="peran" class="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
+    <h2 class="text-2xl font-bold text-[#0B2B26] sm:text-3xl">Dibuat untuk tiga peran</h2>
     <div class="mt-8 grid gap-4 md:grid-cols-3">
         @foreach ([
             ['Warga', ['Lihat jadwal dan sisa kuota', 'Daftar dan batalkan kegiatan sendiri', 'Pantau riwayat pemeriksaan pribadi']],
@@ -155,13 +155,13 @@
 {{-- Jadwal mendatang --}}
 <section id="jadwal" class="bg-[#8EB69B]/30">
     <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <h2 class="text-3xl font-bold text-[#0B2B26]">Jadwal mendatang</h2>
+        <h2 class="text-2xl font-bold text-[#0B2B26] sm:text-3xl">Jadwal mendatang</h2>
         <div class="mt-8 grid gap-4 md:grid-cols-3">
             @forelse ($jadwals as $j)
                 <article class="flex gap-4 rounded-2xl bg-white/70 p-5">
                     <div class="h-16 w-16 shrink-0 rounded-xl bg-[#235347] py-2 text-center text-[#DAF1DE]">
                         <div class="text-2xl font-extrabold leading-none">{{ $j->tanggal->format('d') }}</div>
-                        <div class="mt-1 text-xs">{{ $j->tanggal->translatedFormat('M') }}</div>
+                        <div class="mt-1 text-xs">{{ $j->tanggal->locale('id')->translatedFormat('M') }}</div>
                     </div>
                     <div class="min-w-0">
                         <h3 class="truncate font-bold text-[#0B2B26]">{{ $j->kegiatan->judul }}</h3>
@@ -178,7 +178,7 @@
 
 {{-- FAQ --}}
 <section id="faq" class="mx-auto max-w-3xl px-4 py-16 sm:px-6" x-data="{ open: 0 }">
-    <h2 class="text-3xl font-bold text-[#0B2B26]">Pertanyaan umum</h2>
+    <h2 class="text-2xl font-bold text-[#0B2B26] sm:text-3xl">Pertanyaan umum</h2>
     <div class="mt-8 divide-y divide-[#8EB69B] rounded-2xl border border-[#8EB69B] bg-white/50">
         @foreach ([
             ['Kenapa NIK saya tidak bisa dipakai mendaftar?', 'NIK harus lebih dulu didata oleh kader Posyandu. Hubungi kader di lingkungan Anda.'],

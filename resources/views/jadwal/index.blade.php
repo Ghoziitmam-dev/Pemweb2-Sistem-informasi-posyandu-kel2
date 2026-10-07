@@ -16,10 +16,25 @@
             <p class="mt-1 text-sm text-slate-500">Jadwal pelaksanaan kegiatan Posyandu beserta pendaftaran pesertanya.</p>
         </div>
         <button x-show="isStaff" x-cloak @click="openCreate()"
-                class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700">
+                class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2">
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
             Tambah Jadwal
         </button>
+    </div>
+
+    {{-- Ringkasan --}}
+    <div class="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <template x-for="s in stats" :key="s.label">
+            <button type="button" @click="filters.status = s.status; load(1)"
+                    class="rounded-2xl border bg-white p-4 text-left shadow-sm transition hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                    :class="filters.status === s.status ? 'border-emerald-400 ring-1 ring-emerald-200' : 'border-slate-200'">
+                <div class="flex items-center gap-2">
+                    <span class="h-2 w-2 rounded-full" :class="s.dot"></span>
+                    <p class="text-xs font-medium text-slate-500" x-text="s.label"></p>
+                </div>
+                <p class="mt-1.5 text-2xl font-bold tabular-nums" :class="s.color" x-text="s.value"></p>
+            </button>
+        </template>
     </div>
 
     {{-- Filter --}}
@@ -50,7 +65,7 @@
     </div>
 
     {{-- Daftar --}}
-    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
 
         {{-- Skeleton --}}
         <template x-for="n in (loading && !items.length ? 6 : 0)" :key="'s'+n">
@@ -81,7 +96,7 @@
                               :class="badge(item.status)" x-text="item.status_label"></span>
                         <h3 class="mt-1.5 truncate text-base font-semibold text-slate-900"
                             :title="item.kegiatan?.judul" x-text="item.kegiatan?.judul"></h3>
-                        <p class="text-sm text-slate-500" x-text="item.tanggal_label"></p>
+                        <p class="text-sm text-slate-500" x-text="tanggalID(item)"></p>
                     </div>
                 </div>
 
@@ -156,9 +171,13 @@
 
     {{-- Kosong --}}
     <div x-show="!loading && !items.length" x-cloak
-         class="rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center">
-        <p class="text-base font-medium text-slate-700">Belum ada jadwal</p>
+         class="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-16 text-center">
+        <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+        </div>
+        <p class="mt-4 text-base font-medium text-slate-700">Belum ada jadwal</p>
         <p class="mt-1 text-sm text-slate-500">Coba ubah filter pencarian, atau tambahkan jadwal baru.</p>
+        <button x-show="isStaff" x-cloak @click="openCreate()" class="{{ $primary }} mt-5 px-4 py-2 text-sm">Tambah jadwal</button>
     </div>
 
     {{-- Pagination --}}
@@ -182,7 +201,7 @@
              class="relative max-h-[90vh] w-full overflow-y-auto rounded-t-2xl bg-white p-6 shadow-xl sm:max-w-lg sm:rounded-2xl">
             <div class="mb-5 flex items-center justify-between">
                 <h2 class="text-lg font-semibold text-slate-900" x-text="form.id ? 'Edit Jadwal' : 'Tambah Jadwal'"></h2>
-                <button @click="form.open = false" class="rounded-lg p-1 text-slate-400 hover:bg-slate-100">
+                <button @click="form.open = false" aria-label="Tutup" class="rounded-lg p-1 text-slate-400 hover:bg-slate-100">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
@@ -205,7 +224,7 @@
                     <p class="mt-1 text-xs text-rose-600" x-show="form.errors.tanggal" x-text="form.errors.tanggal?.[0]"></p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                         <label class="{{ $label }}">Jam mulai</label>
                         <input type="time" x-model="form.data.jam_mulai" class="{{ $input }}">
@@ -224,7 +243,7 @@
                     <p class="mt-1 text-xs text-rose-600" x-show="form.errors.lokasi" x-text="form.errors.lokasi?.[0]"></p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                         <label class="{{ $label }}">Petugas <span class="font-normal text-slate-400">(opsional)</span></label>
                         <input type="text" x-model="form.data.petugas" class="{{ $input }}">
@@ -260,13 +279,13 @@
                                   :class="badge(detail.item.status)" x-text="detail.item.status_label"></span>
                             <h2 class="mt-1.5 text-lg font-semibold text-slate-900" x-text="detail.item.kegiatan?.judul"></h2>
                         </div>
-                        <button @click="detail.open = false" class="rounded-lg p-1 text-slate-400 hover:bg-slate-100">
+                        <button @click="detail.open = false" aria-label="Tutup" class="rounded-lg p-1 text-slate-400 hover:bg-slate-100">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>
 
                     <dl class="grid grid-cols-3 gap-y-2 text-sm">
-                        <dt class="text-slate-500">Tanggal</dt><dd class="col-span-2" x-text="detail.item.tanggal_label"></dd>
+                        <dt class="text-slate-500">Tanggal</dt><dd class="col-span-2" x-text="tanggalID(detail.item)"></dd>
                         <dt class="text-slate-500">Waktu</dt><dd class="col-span-2" x-text="detail.item.jam_mulai + ' - ' + detail.item.jam_selesai + ' WIB'"></dd>
                         <dt class="text-slate-500">Lokasi</dt><dd class="col-span-2" x-text="detail.item.lokasi"></dd>
                         <dt class="text-slate-500">Petugas</dt><dd class="col-span-2" x-text="detail.item.petugas || '-'"></dd>
@@ -331,6 +350,18 @@ function jadwalPage() {
         get isStaff() { return !!this.user && ['admin', 'kader'].includes(this.user.role); },
         get isWarga() { return this.user?.role === 'warga'; },
 
+        // Kartu ringkasan. Pakai meta.counts dari API kalau ada (akurat untuk semua data);
+        // kalau tidak, dihitung dari data di halaman yang sedang tampil.
+        get stats() {
+            const c = s => this.meta?.counts?.[s] ?? this.items.filter(i => i.status === s).length;
+            return [
+                { label: 'Total jadwal', status: '',            value: this.meta?.counts?.total ?? this.meta?.total ?? 0, color: 'text-slate-900',   dot: 'bg-slate-400' },
+                { label: 'Akan datang',  status: 'akan_datang', value: c('akan_datang'),                                  color: 'text-sky-600',     dot: 'bg-sky-500' },
+                { label: 'Berlangsung',  status: 'berlangsung', value: c('berlangsung'),                                  color: 'text-emerald-600', dot: 'bg-emerald-500' },
+                { label: 'Selesai',      status: 'selesai',     value: c('selesai'),                                      color: 'text-slate-500',   dot: 'bg-slate-300' },
+            ];
+        },
+
         async init() {
             if (!auth.token()) { window.location.href = '/login'; return; }
             try {
@@ -364,6 +395,11 @@ function jadwalPage() {
         // ---------- tampilan ----------
         day(i) { return new Date(i.tanggal + 'T00:00:00').getDate(); },
         mon(i) { return new Date(i.tanggal + 'T00:00:00').toLocaleDateString('id-ID', { month: 'short' }); },
+        tanggalID(i) {
+            return new Date(i.tanggal + 'T00:00:00').toLocaleDateString('id-ID', {
+                weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+            });
+        },
         pct(i) { return i.kuota ? Math.min(100, Math.round((i.terisi / i.kuota) * 100)) : 0; },
         badge(s) {
             return {
@@ -475,7 +511,7 @@ function jadwalPage() {
         daftar(i) {
             this.ask({
                 title: 'Daftar kegiatan ini?', label: 'Ya, daftar',
-                text: `${i.kegiatan?.judul} pada ${i.tanggal_label}.`,
+                text: `${i.kegiatan?.judul} pada ${this.tanggalID(i)}.`,
                 action: async () => {
                     const r = await api(`/jadwal/${i.id}/pendaftaran`, { method: 'POST' });
                     toast(r.message);
