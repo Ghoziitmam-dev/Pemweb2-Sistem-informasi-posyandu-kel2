@@ -1,118 +1,168 @@
-<x-app-layout>
-
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Detail Kegiatan
-            </h2>
-
-            <a href="{{ route('kegiatan.index') }}"
-               class="px-4 py-2 bg-gray-800 text-white rounded-md">
-                Kembali
-            </a>
-
-        </div>
-    </x-slot>
+<x-layouts.panel title="Detail Kegiatan">
 
 
-    <div class="py-8">
-
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-
-            <div class="bg-white shadow-sm rounded-lg p-6">
-
-                <div class="space-y-4">
+<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
 
 
-                    <div>
-                        <h3 class="text-sm text-gray-500">
-                            Judul Kegiatan
-                        </h3>
+    <div class="mb-6 flex items-center justify-between">
 
-                        <p class="text-lg font-semibold">
-                            {{ $kegiatan->judul }}
-                        </p>
-                    </div>
+        <div>
+
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900">
+                {{ $kegiatan->judul }}
+            </h1>
 
 
-
-                    <div>
-                        <h3 class="text-sm text-gray-500">
-                            Jenis
-                        </h3>
-
-                        <p>
-                            {{ $kegiatan->jenis }}
-                        </p>
-                    </div>
-
-
-
-                    <div>
-                        <h3 class="text-sm text-gray-500">
-                            Deskripsi
-                        </h3>
-
-                        <p>
-                            {{ $kegiatan->deskripsi ?? '-' }}
-                        </p>
-                    </div>
-
-
-
-                    <div>
-                        <h3 class="text-sm text-gray-500">
-                            Target Peserta
-                        </h3>
-
-                        <p>
-                            {{ $kegiatan->target_peserta ?? '-' }}
-                        </p>
-                    </div>
-
-
-
-                    <div>
-                        <h3 class="text-sm text-gray-500">
-                            Foto
-                        </h3>
-
-                        <p>
-                            {{ $kegiatan->foto ?? '-' }}
-                        </p>
-                    </div>
-
-
-
-                    <div>
-                        <h3 class="text-sm text-gray-500">
-                            Status
-                        </h3>
-
-                        @if($kegiatan->status == 'aktif')
-
-                            <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">
-                                Aktif
-                            </span>
-
-                        @else
-
-                            <span class="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700">
-                                Nonaktif
-                            </span>
-
-                        @endif
-
-                    </div>
-
-
-                </div>
-
-            </div>
+            <p class="mt-1 text-sm text-slate-500">
+                Detail informasi kegiatan Posyandu.
+            </p>
 
         </div>
+
+
+
+        <a href="{{ route('kegiatan.index') }}"
+           class="inline-flex items-center rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">
+
+            Kembali
+
+        </a>
+
 
     </div>
 
-</x-app-layout>
+
+
+
+
+    <div class="space-y-5">
+
+
+
+        {{-- Foto Kegiatan --}}
+        <div>
+
+            <p class="text-sm font-semibold text-slate-500">
+                Foto Kegiatan
+            </p>
+
+
+            @if($kegiatan->foto)
+
+                <img
+                    src="{{ asset('storage/'.$kegiatan->foto) }}"
+                    alt="Foto {{ $kegiatan->judul }}"
+                    class="mt-3 h-64 w-full rounded-xl object-cover shadow-sm">
+
+            @else
+
+                <p class="mt-1 text-slate-500">
+                    Belum ada foto kegiatan.
+                </p>
+
+            @endif
+
+
+        </div>
+
+
+
+
+
+        <div>
+
+            <p class="text-sm font-semibold text-slate-500">
+                Judul Kegiatan
+            </p>
+
+            <p class="mt-1 text-lg font-semibold text-slate-900">
+                {{ $kegiatan->judul }}
+            </p>
+
+        </div>
+
+
+
+
+
+        <div>
+
+            <p class="text-sm font-semibold text-slate-500">
+                Jenis Kegiatan
+            </p>
+
+            <p class="mt-1 text-slate-700">
+                {{ ucfirst($kegiatan->jenis) }}
+            </p>
+
+        </div>
+
+
+
+
+
+        <div>
+
+            <p class="text-sm font-semibold text-slate-500">
+                Deskripsi
+            </p>
+
+            <p class="mt-1 text-slate-700">
+                {{ $kegiatan->deskripsi ?? '-' }}
+            </p>
+
+        </div>
+
+
+
+
+
+        <div>
+
+            <p class="text-sm font-semibold text-slate-500">
+                Target Peserta
+            </p>
+
+            <p class="mt-1 text-slate-700">
+                {{ $kegiatan->target_peserta ?? '-' }}
+            </p>
+
+        </div>
+
+
+
+
+
+        <div>
+
+            <p class="text-sm font-semibold text-slate-500">
+                Status
+            </p>
+
+
+            @if($kegiatan->status == 'aktif')
+
+                <span class="mt-1 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                    Aktif
+                </span>
+
+            @else
+
+                <span class="mt-1 inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                    Nonaktif
+                </span>
+
+            @endif
+
+
+        </div>
+
+
+
+    </div>
+
+
+</div>
+
+
+</x-layouts.panel>

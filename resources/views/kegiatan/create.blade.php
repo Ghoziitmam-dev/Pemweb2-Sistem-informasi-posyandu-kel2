@@ -1,118 +1,253 @@
-<x-app-layout>
+<x-layouts.panel title="Tambah Kegiatan">
 
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+
+<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+
+
+    <div class="mb-6">
+
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">
             Tambah Kegiatan
-        </h2>
-    </x-slot>
+        </h1>
+
+        <p class="mt-1 text-sm text-slate-500">
+            Tambahkan informasi kegiatan Posyandu baru.
+        </p>
+
+    </div>
 
 
-    <div class="py-8">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
 
-            <div class="bg-white shadow-sm rounded-lg p-6">
+    <form method="POST"
+          action="{{ route('kegiatan.store') }}"
+          enctype="multipart/form-data">
 
-                <form method="POST" action="{{ route('kegiatan.store') }}">
-
-                    @csrf
-
-                    <div class="space-y-4">
-
-                        <div>
-                            <x-input-label value="Judul Kegiatan"/>
-
-                            <x-text-input
-                                name="judul"
-                                class="mt-1 block w-full"
-                                value="{{ old('judul') }}"
-                            />
-
-                            <x-input-error :messages="$errors->get('judul')" />
-                        </div>
+        @csrf
 
 
-                        <div>
-                            <x-input-label value="Jenis Kegiatan"/>
-
-                            <x-text-input
-                                name="jenis"
-                                class="mt-1 block w-full"
-                                value="{{ old('jenis') }}"
-                            />
-
-                            <x-input-error :messages="$errors->get('jenis')" />
-                        </div>
+        <div class="space-y-5">
 
 
-                        <div>
-                            <x-input-label value="Deskripsi"/>
+            {{-- Judul --}}
+            <div>
 
-                            <textarea
-                                name="deskripsi"
-                                class="mt-1 block w-full border-gray-300 rounded-md"
-                            >{{ old('deskripsi') }}</textarea>
-
-                        </div>
+                <label class="text-sm font-semibold text-slate-700">
+                    Judul Kegiatan
+                </label>
 
 
-                        <div>
-                            <x-input-label value="Target Peserta"/>
-
-                            <x-text-input
-                                name="target_peserta"
-                                class="mt-1 block w-full"
-                                value="{{ old('target_peserta') }}"
-                            />
-
-                        </div>
+                <input
+                    type="text"
+                    name="judul"
+                    value="{{ old('judul') }}"
+                    class="mt-1 block w-full rounded-lg border-slate-300 text-sm focus:border-emerald-500 focus:ring-emerald-500">
 
 
-                        <div>
-                            <x-input-label value="Foto"/>
-
-                            <x-text-input
-                                name="foto"
-                                class="mt-1 block w-full"
-                                value="{{ old('foto') }}"
-                            />
-
-                        </div>
-
-
-                        <div>
-                            <x-input-label value="Status"/>
-
-                            <select name="status"
-                                class="mt-1 block w-full border-gray-300 rounded-md">
-
-                                <option value="aktif">
-                                    Aktif
-                                </option>
-
-                                <option value="nonaktif">
-                                    Nonaktif
-                                </option>
-
-                            </select>
-                        </div>
-
-
-                        <div class="flex justify-end">
-
-                            <button
-                                class="px-4 py-2 bg-indigo-600 text-white rounded-md">
-                                Simpan
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </form>
+                @error('judul')
+                    <p class="mt-1 text-xs text-red-600">
+                        {{ $message }}
+                    </p>
+                @enderror
 
             </div>
 
-        </div>
-    </div>
 
-</x-app-layout>
+
+
+
+            {{-- Jenis --}}
+            <div>
+
+                <label class="text-sm font-semibold text-slate-700">
+                    Jenis Kegiatan
+                </label>
+
+
+                <input
+                    type="text"
+                    name="jenis"
+                    value="{{ old('jenis') }}"
+                    placeholder="Contoh: Penimbangan, Imunisasi"
+                    class="mt-1 block w-full rounded-lg border-slate-300 text-sm focus:border-emerald-500 focus:ring-emerald-500">
+
+
+                @error('jenis')
+                    <p class="mt-1 text-xs text-red-600">
+                        {{ $message }}
+                    </p>
+                @enderror
+
+            </div>
+
+
+
+
+
+            {{-- Deskripsi --}}
+            <div>
+
+                <label class="text-sm font-semibold text-slate-700">
+                    Deskripsi
+                </label>
+
+
+                <textarea
+                    name="deskripsi"
+                    rows="4"
+                    class="mt-1 block w-full rounded-lg border-slate-300 text-sm focus:border-emerald-500 focus:ring-emerald-500">{{ old('deskripsi') }}</textarea>
+
+            </div>
+
+
+
+
+
+            {{-- Target --}}
+            <div>
+
+                <label class="text-sm font-semibold text-slate-700">
+                    Target Peserta
+                </label>
+
+
+                <input
+                    type="text"
+                    name="target_peserta"
+                    value="{{ old('target_peserta') }}"
+                    placeholder="Contoh: Balita, Lansia, Ibu Hamil"
+                    class="mt-1 block w-full rounded-lg border-slate-300 text-sm focus:border-emerald-500 focus:ring-emerald-500">
+
+            </div>
+
+
+
+
+
+            {{-- Foto --}}
+            <div>
+
+                <label class="text-sm font-semibold text-slate-700">
+                    Foto Kegiatan
+                </label>
+
+
+                <input
+                    type="file"
+                    name="foto"
+                    accept="image/*"
+                    onchange="cekUkuranFoto(this)"
+                    class="mt-1 block w-full rounded-lg border-slate-300 text-sm">
+
+
+                <p id="error-foto"
+                class="mt-1 hidden text-xs text-red-600">
+                    Ukuran file lebih dari 2 MB. Silakan pilih foto lain.
+                </p>
+
+
+                <p class="mt-1 text-xs text-slate-500">
+                    Format gambar: JPG, PNG, JPEG. Maksimal 2 MB.
+                </p>
+
+
+                @error('foto')
+                    <p class="mt-1 text-xs text-red-600">
+                        {{ $message }}
+                    </p>
+                @enderror
+
+            </div>
+
+
+
+
+
+            {{-- Status --}}
+            <div>
+
+                <label class="text-sm font-semibold text-slate-700">
+                    Status
+                </label>
+
+
+                <select
+                    name="status"
+                    class="mt-1 block w-full rounded-lg border-slate-300 text-sm focus:border-emerald-500 focus:ring-emerald-500">
+
+
+                    <option value="aktif"
+                        {{ old('status') == 'aktif' ? 'selected' : '' }}>
+                        Aktif
+                    </option>
+
+
+                    <option value="nonaktif"
+                        {{ old('status') == 'nonaktif' ? 'selected' : '' }}>
+                        Nonaktif
+                    </option>
+
+
+                </select>
+
+            </div>
+
+
+
+
+
+            {{-- Tombol --}}
+            <div class="flex justify-end gap-3">
+
+
+                <a href="{{ route('kegiatan.index') }}"
+                   class="rounded-lg border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50">
+
+                    Batal
+
+                </a>
+
+
+
+                <button
+                    type="submit"
+                    class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
+
+                    Simpan
+
+                </button>
+
+                <script>
+                    function cekUkuranFoto(input) {
+
+                        const file = input.files[0];
+                        const error = document.getElementById('error-foto');
+
+                        if (file && file.size > 2 * 1024 * 1024) {
+
+                            error.classList.remove('hidden');
+                            input.value = '';
+
+                        } else {
+
+                            error.classList.add('hidden');
+
+                        }
+
+                    }
+                    </script>
+
+
+            </div>
+
+
+
+        </div>
+
+
+    </form>
+
+
+</div>
+
+
+</x-layouts.panel>

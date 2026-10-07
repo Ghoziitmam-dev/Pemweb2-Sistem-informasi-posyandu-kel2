@@ -24,10 +24,19 @@ Route::get('/', function () {
     return view('welcome', compact('jadwals', 'stat'));
 })->name('home');
 
+Route::resource('jadwal', JadwalController::class)
+    ->only(['index', 'show']);
+
 Route::view('/login', 'auth.login')->name('login');
 Route::view('/register', 'auth.register')->name('register');
 
 Route::redirect('/dashboard', '/jadwal')->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
 require __DIR__.'/web/warga.php';
 require __DIR__.'/web/kegiatan.php';
