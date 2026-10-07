@@ -2,6 +2,7 @@
 
 use App\Models\{Jadwal, Kegiatan, Warga};
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Api\JadwalController;
 use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\ProfileController;
@@ -10,8 +11,10 @@ Route::get('/', function () {
     $jadwals = Jadwal::with('kegiatan')
         ->where('status', 'akan_datang')
         ->whereDate('tanggal', '>=', today())
-        ->orderBy('tanggal')->orderBy('jam_mulai')
-        ->take(3)->get();
+        ->orderBy('tanggal')
+        ->orderBy('jam_mulai')
+        ->take(3)
+        ->get();
 
     $stat = [
         'warga' => Warga::count(),
@@ -30,12 +33,26 @@ Route::resource('jadwal', JadwalController::class)
 Route::view('/login', 'auth.login')->name('login');
 Route::view('/register', 'auth.register')->name('register');
 
+Route::post('/logout', function () {
+    Auth::logout();
+
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+
+    return redirect()->route('login');
+})->middleware('auth')->name('logout');
+
 Route::redirect('/dashboard', '/jadwal')->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
 });
 
 require __DIR__.'/web/warga.php';
