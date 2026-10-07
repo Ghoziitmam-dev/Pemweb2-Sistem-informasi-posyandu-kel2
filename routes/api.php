@@ -3,11 +3,20 @@ use App\Http\Controllers\Api\PemeriksaanController;
 use App\Http\Controllers\Api\AuthController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('auth')->group(function () {
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('login', [AuthController::class, 'login'])->middleware('throttle:10,1');
+// Session middleware hanya untuk login & logout agar web session terbuat
+$sessionMiddleware = [
+    \Illuminate\Cookie\Middleware\EncryptCookies::class,
+    \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+    \Illuminate\Session\Middleware\StartSession::class,
+];
 
-    Route::middleware('auth:sanctum')->group(function () {
+Route::prefix('auth')->group(function () use ($sessionMiddleware) {
+    Route::middleware($sessionMiddleware)->group(function () {
+        Route::post('register', [AuthController::class, 'register'])->middleware('throttle:10,1');
+        Route::post('login', [AuthController::class, 'login'])->middleware('throttle:10,1');
+    });
+
+    Route::middleware(['auth:sanctum', ...$sessionMiddleware])->group(function () {
         Route::get('me', [AuthController::class, 'me']);
         Route::post('logout', [AuthController::class, 'logout']);
     });

@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Masuk · Posyandu Digital</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,9 +42,14 @@
             async submit() {
                 this.loading = true; this.error = ''; this.fieldErrors = {};
                 try {
+                    const csrfToken = document.querySelector('meta[name=csrf-token]')?.content ?? '';
                     const res = await fetch('/api/auth/login', {
                         method: 'POST',
-                        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                        },
                         body: JSON.stringify({ email: this.email, password: this.password }),
                     });
                     const json = await res.json().catch(() => ({}));

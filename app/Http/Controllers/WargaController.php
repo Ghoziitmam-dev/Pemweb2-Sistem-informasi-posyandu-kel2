@@ -62,6 +62,14 @@ class WargaController extends Controller
 
     public function show(Warga $warga): View
     {
+        $warga->load([
+            'pemeriksaans' => function ($query) {
+                $query->orderByDesc('tanggal');
+            },
+            'pemeriksaans.jadwal.kegiatan',
+            'pemeriksaans.pemeriksa'
+        ]);
+
         return view('warga.show', compact('warga'));
     }
 

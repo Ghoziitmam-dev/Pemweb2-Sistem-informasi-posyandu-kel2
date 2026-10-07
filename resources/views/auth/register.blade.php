@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Daftar · Posyandu</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>[x-cloak]{display:none !important}</style>
@@ -16,9 +17,14 @@
         async submit() {
             this.loading = true; this.error = ''; this.errors = {};
             try {
+                const csrfToken = document.querySelector('meta[name=csrf-token]')?.content ?? '';
                 const res = await fetch('/api/auth/register', {
                     method: 'POST',
-                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
                     body: JSON.stringify(this.f),
                 });
                 const json = await res.json().catch(() => ({}));

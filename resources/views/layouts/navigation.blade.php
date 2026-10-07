@@ -10,10 +10,12 @@
 
             <div class="navbar-menu">
 
-                <a href="{{ route('warga.index') }}"
-                   class="nav-item {{ request()->routeIs('warga.*') ? 'active' : '' }}">
-                    Warga
-                </a>
+                @if(Auth::check() && in_array(Auth::user()?->role, ['admin', 'kader']))
+                    <a href="{{ route('warga.index') }}"
+                       class="nav-item {{ request()->routeIs('warga.*') ? 'active' : '' }}">
+                        Warga
+                    </a>
+                @endif
 
                 <a href="{{ route('kegiatan.index') }}"
                    class="nav-item {{ request()->routeIs('kegiatan.*') ? 'active' : '' }}">
@@ -25,10 +27,19 @@
                     Jadwal
                 </a>
 
-                <a href="{{ route('pemeriksaan.index') }}"
-                   class="nav-item {{ request()->routeIs('pemeriksaan.*') ? 'active' : '' }}">
-                    Pemeriksaan
-                </a>
+                @if(Auth::check() && in_array(Auth::user()?->role, ['admin', 'kader']))
+                    <a href="{{ route('pemeriksaan.index') }}"
+                       class="nav-item {{ request()->routeIs('pemeriksaan.*') ? 'active' : '' }}">
+                        Pemeriksaan
+                    </a>
+                @endif
+
+                @if(Auth::check() && Auth::user()?->role === 'warga')
+                    <a href="{{ route('riwayat.pemeriksaan') }}"
+                       class="nav-item {{ request()->routeIs('riwayat.*') ? 'active' : '' }}">
+                        Riwayat Pemeriksaan
+                    </a>
+                @endif
 
             </div>
 

@@ -10,6 +10,11 @@ use Illuminate\Http\Request;
 
 class PemeriksaanController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'role:admin,kader']);
+    }
+
     public function index(Request $request)
     {
         $query = Pemeriksaan::with([

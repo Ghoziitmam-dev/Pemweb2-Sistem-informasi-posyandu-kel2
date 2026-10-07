@@ -361,9 +361,20 @@ function jadwalPage() {
         },
 
         async init() {
-            if (!auth.token()) { window.location.href = '/login'; return; }
             try {
                 this.user = await getMe();
+            } catch (e) {
+                // getMe() only throws on non-401 errors; 401 returns null
+                this.user = null;
+            }
+
+            // Redirect ke login hanya jika user benar-benar null (token tidak ada / tidak valid)
+            if (!this.user) {
+                window.location.href = '/login';
+                return;
+            }
+
+            try {
                 if (this.isStaff) {
                     const r = await api('/jadwal/opsi');
                     this.kegiatans = r.data.kegiatans;

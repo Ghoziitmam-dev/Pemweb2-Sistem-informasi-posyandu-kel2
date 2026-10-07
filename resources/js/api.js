@@ -24,10 +24,6 @@ export async function api(path, { method = 'GET', body, params } = {}) {
 
     const json = await res.json().catch(() => ({}));
 
-    if (res.status === 401) {
-        auth.clear();
-        window.location.href = '/login';
-    }
     if (!res.ok) throw { status: res.status, ...json };
 
     return json;
@@ -35,11 +31,27 @@ export async function api(path, { method = 'GET', body, params } = {}) {
 
 let meCache = null;
 
-export function getMe() {
-    meCache ??= api('/auth/me')
-        .then((r) => r.data)
-        .catch((e) => { meCache = null; throw e; });
-    return meCache;
+export async function getMe() {
+    if (meCache) return meCache;
+
+    try {
+        const r = await api('/auth/me');
+        meCache = r.data;
+        return meCache;
+    } catch (e) {
+        meCache = null;
+        if (e.status === 401) {
+            // Token tidak valid — hapus token dan kembalikan null
+            // JANGAN redirect di sini; biarkan halaman yang memutuskan
+            auth.clear();
+            return null;
+        }
+        throw e;
+    }
+}
+
+export function clearMeCache() {
+    meCache = null;
 }
 
 export function toast(message, type = 'success') {

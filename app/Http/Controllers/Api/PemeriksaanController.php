@@ -36,7 +36,15 @@ class PemeriksaanController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data pemeriksaan berhasil diambil',
-            'data' => $data,
+            'data' => $data->items(),
+            'meta' => [
+                'current_page' => $data->currentPage(),
+                'last_page' => $data->lastPage(),
+                'per_page' => $data->perPage(),
+                'total' => $data->total(),
+                'from' => $data->firstItem(),
+                'to' => $data->lastItem(),
+            ],
         ]);
     }
 

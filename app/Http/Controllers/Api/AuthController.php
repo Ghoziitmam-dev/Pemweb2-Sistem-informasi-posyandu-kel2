@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Warga;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -32,19 +33,23 @@ class AuthController extends Controller
         }
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'warga',
+            'role'     => 'warga',
             'warga_id' => $warga->id,
         ]);
+
+        // Buat web session sekaligus agar halaman server-side bisa diakses
+        Auth::guard('web')->login($user);
+        $request->session()->regenerate();
 
         return response()->json([
             'success' => true,
             'message' => 'Registrasi berhasil.',
-            'data' => [
-                'user' => new UserResource($user->load('warga')),
-                'token' => $user->createToken('api-token')->plainTextToken,
+            'data'    => [
+                'user'       => new UserResource($user->load('warga')),
+                'token'      => $user->createToken('api-token')->plainTextToken,
                 'token_type' => 'Bearer',
             ],
         ], 201);
@@ -61,12 +66,16 @@ class AuthController extends Controller
             ], 401);
         }
 
+        // Buat web session agar halaman server-side (warga, kegiatan, dll) bisa diakses
+        Auth::guard('web')->login($user, true);
+        $request->session()->regenerate();
+
         return response()->json([
             'success' => true,
             'message' => 'Login berhasil.',
-            'data' => [
-                'user' => new UserResource($user->load('warga')),
-                'token' => $user->createToken('api-token')->plainTextToken,
+            'data'    => [
+                'user'       => new UserResource($user->load('warga')),
+                'token'      => $user->createToken('api-token')->plainTextToken,
                 'token_type' => 'Bearer',
             ],
         ]);
@@ -76,13 +85,21 @@ class AuthController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => new UserResource($request->user()->load('warga')),
+            'data'    => new UserResource($request->user()->load('warga')),
         ]);
     }
 
     public function logout(Request $request): JsonResponse
     {
+        // Hapus API token
         $request->user()->currentAccessToken()->delete();
+
+        // Akhiri web session
+        Auth::guard('web')->logout();
+        if ($request->hasSession()) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
 
         return response()->json([
             'success' => true,

@@ -16,13 +16,14 @@
         [x-cloak]{display:none!important}
         body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
     </style>
-</head>
-@php
-    $menu = [
-        ['label'=>'Warga','route'=>'warga.index','match'=>'warga.*'],
-        ['label'=>'Kegiatan','route'=>'kegiatan.index','match'=>'kegiatan.*'],
-        ['label'=>'Jadwal','route'=>'jadwal.index','match'=>'jadwal.*'],
-        ['label'=>'Pemeriksaan','route'=>'pemeriksaan.index','match'=>'pemeriksaan.*'],
+</head>@php
+    // Define all available menus with their allowed roles
+    $allMenu = [
+        ['label'=>'Data Warga', 'url'=>route('warga.index'), 'active'=>request()->routeIs('warga.*'), 'roles' => ['admin', 'kader']],
+        ['label'=>'Kegiatan', 'url'=>route('kegiatan.index'), 'active'=>request()->routeIs('kegiatan.*'), 'roles' => ['admin', 'kader', 'warga']],
+        ['label'=>'Jadwal', 'url'=>route('jadwal.index'), 'active'=>request()->routeIs('jadwal.*'), 'roles' => ['admin', 'kader', 'warga']],
+        ['label'=>'Pemeriksaan', 'url'=>route('pemeriksaan.index'), 'active'=>request()->routeIs('pemeriksaan.*'), 'roles' => ['admin', 'kader']],
+        ['label'=>'Riwayat Pemeriksaan', 'url'=>route('riwayat.pemeriksaan'), 'active'=>request()->routeIs('riwayat.*'), 'roles' => ['warga']],
     ];
     $linkBase = 'whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-150';
     $linkActive = 'bg-[#DAF1DE] text-[#051F20] shadow-xs border border-[#8EB69B]/40 font-bold';
@@ -31,14 +32,19 @@
 <body class="min-h-screen bg-[#DAF1DE]/25 text-[#051F20] antialiased">
 <header
     x-data="{
-        user: {{ Auth::check() ? json_encode(['name' => Auth::user()->name, 'role' => Auth::user()->role ?? 'Admin']) : 'null' }},
+        user: {{ Auth::check() ? json_encode(['name' => Auth::user()->name, 'role' => Auth::user()->role ?? 'admin']) : 'null' }},
+        allMenu: {{ json_encode($allMenu) }},
         menuOpen: false,
+        get menu() {
+            if (!this.user) return [];
+            const role = (this.user.role || 'warga').toLowerCase();
+            return this.allMenu.filter(m => m.roles.includes(role));
+        },
         async logout(){
             try { await api('/auth/logout',{method:'POST'}); } catch(e){}
             if(window.auth && window.auth.clear) window.auth.clear();
-            const form = document.getElementById('global-logout-form');
-            if(form) form.submit();
-            else window.location.href='/login';
+            if(window.clearMeCache) window.clearMeCache();
+            window.location.href='/login';
         }
     }"
     x-init="if(!user && window.getMe) getMe().then(u=>user=u).catch(()=>{})"
@@ -70,59 +76,38 @@
 
         <!-- Desktop Navigation Menu -->
         <nav class="hidden flex-1 items-center gap-1.5 md:flex ml-4">
-            @foreach($menu as $m)
+            <template x-for="(m, i) in menu" :key="i">
                 <a
-                    href="{{ route($m['route']) }}"
-                    class="{{ $linkBase }} {{ request()->routeIs($m['match']) ? $linkActive : $linkIdle }}"
-                >
-                    {{ $m['label'] }}
-                </a>
-            @endforeach
+                    :href="m.url"
+                    :class="m.active ? '{{ $linkActive }}' : '{{ $linkIdle }}'"
+                    class="{{ $linkBase }}"
+                    x-text="m.label"
+                ></a>
+            </template>
         </nav>
 
         <div class="flex-1 md:hidden"></div>
 
         <!-- User Profile & Action -->
-        @auth
-            <div class="flex shrink-0 items-center gap-3">
-                <div class="hidden text-right sm:block leading-tight">
-                    <p class="text-sm font-bold text-[#051F20]">{{ Auth::user()->name }}</p>
-                    <p class="text-xs font-semibold capitalize text-[#7FA08C]">{{ Auth::user()->role ?? 'Admin Posyandu' }}</p>
-                </div>
-                <span class="flex h-9 w-9 items-center justify-center rounded-full border border-[#8EB69B]/40 bg-[#DAF1DE] text-sm font-bold text-[#0B2B26]">
-                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                </span>
-                <form id="global-logout-form" method="POST" action="{{ route('logout') }}" class="inline">
-                    @csrf
-                    <button
-                        type="submit"
-                        class="rounded-xl border border-[#BCDCC6] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#163832] shadow-2xs transition hover:bg-[#DAF1DE]/60 hover:text-[#051F20]"
-                    >
-                        Keluar
-                    </button>
-                </form>
+        <div x-show="user" x-cloak class="flex shrink-0 items-center gap-3">
+            <div class="hidden text-right sm:block leading-tight">
+                <p class="text-sm font-bold text-[#051F20]" x-text="user?.name"></p>
+                <p class="text-xs font-semibold capitalize text-[#7FA08C]" x-text="user?.role || 'User'"></p>
             </div>
-        @else
-            <div x-show="user" x-cloak class="flex shrink-0 items-center gap-3">
-                <div class="hidden text-right sm:block leading-tight">
-                    <p class="text-sm font-bold text-[#051F20]" x-text="user?.name"></p>
-                    <p class="text-xs font-semibold capitalize text-[#7FA08C]" x-text="user?.role || 'User'"></p>
-                </div>
-                <span
-                    class="flex h-9 w-9 items-center justify-center rounded-full border border-[#8EB69B]/40 bg-[#DAF1DE] text-sm font-bold text-[#0B2B26]"
-                    x-text="(user?.name||'?').charAt(0).toUpperCase()"
-                ></span>
-                <button
-                    @click="logout()"
-                    class="rounded-xl border border-[#BCDCC6] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#163832] shadow-2xs transition hover:bg-[#DAF1DE]/60 hover:text-[#051F20]"
-                >
-                    Keluar
-                </button>
-            </div>
-            <div x-show="!user" class="flex items-center gap-2">
-                <a href="{{ route('login') }}" class="rounded-xl px-3.5 py-1.5 text-xs font-semibold text-[#163832] hover:bg-[#DAF1DE]/50">Masuk</a>
-            </div>
-        @endauth
+            <span
+                class="flex h-9 w-9 items-center justify-center rounded-full border border-[#8EB69B]/40 bg-[#DAF1DE] text-sm font-bold text-[#0B2B26]"
+                x-text="(user?.name||'?').charAt(0).toUpperCase()"
+            ></span>
+            <button
+                @click="logout()"
+                class="rounded-xl border border-[#BCDCC6] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#163832] shadow-2xs transition hover:bg-[#DAF1DE]/60 hover:text-[#051F20]"
+            >
+                Keluar
+            </button>
+        </div>
+        <div x-show="!user" class="flex items-center gap-2">
+            <a href="{{ route('login') }}" class="rounded-xl px-3.5 py-1.5 text-xs font-semibold text-[#163832] hover:bg-[#DAF1DE]/50">Masuk</a>
+        </div>
     </div>
 
     <!-- Mobile Navigation Drawer -->
@@ -138,14 +123,14 @@
         class="border-t border-[#DAF1DE] bg-white px-4 py-3 shadow-md md:hidden"
     >
         <div class="mx-auto flex max-w-7xl flex-col gap-1.5">
-            @foreach($menu as $m)
+            <template x-for="(m, i) in menu" :key="i">
                 <a
-                    href="{{ route($m['route']) }}"
-                    class="{{ $linkBase }} py-2.5 {{ request()->routeIs($m['match']) ? $linkActive : $linkIdle }}"
-                >
-                    {{ $m['label'] }}
-                </a>
-            @endforeach
+                    :href="m.url"
+                    :class="m.active ? '{{ $linkActive }}' : '{{ $linkIdle }}'"
+                    class="{{ $linkBase }} py-2.5"
+                    x-text="m.label"
+                ></a>
+            </template>
         </div>
     </nav>
 </header>
