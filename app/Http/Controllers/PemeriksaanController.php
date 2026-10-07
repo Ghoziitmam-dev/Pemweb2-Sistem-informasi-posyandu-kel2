@@ -36,9 +36,16 @@ class PemeriksaanController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        $stats = [
+            'total' => Pemeriksaan::count(),
+            'bulan_ini' => Pemeriksaan::whereMonth('tanggal', now()->month)->whereYear('tanggal', now()->year)->count(),
+            'normal' => Pemeriksaan::whereIn('status_gizi', ['normal', 'baik', 'Gizi Baik'])->count(),
+            'perlu_perhatian' => Pemeriksaan::whereIn('status_gizi', ['kurang', 'stunting', 'Gizi Kurang', 'Risiko Stunting'])->count(),
+        ];
+
         return view(
             'pemeriksaan.index',
-            compact('pemeriksaans')
+            compact('pemeriksaans', 'stats')
         );
     }
 

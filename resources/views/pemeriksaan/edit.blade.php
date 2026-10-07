@@ -1,72 +1,50 @@
-@extends('layouts.app')
+<x-layouts.panel title="Edit Pemeriksaan">
 
-@section('content')
+<div class="mx-auto max-w-4xl">
 
-<div class="container">
+    <div class="mb-6 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#051F20]">
+                Edit Pemeriksaan
+            </h1>
+            <p class="mt-1 text-sm text-[#3C5A52]">
+                Perbarui hasil pengukuran dan rekam medis pemeriksaan.
+            </p>
+        </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <h3>Edit Pemeriksaan</h3>
-
-        <a href="{{ route('pemeriksaan.index') }}"
-           class="btn btn-secondary">
-            Kembali
+        <a href="{{ route('pemeriksaan.index') }}" class="btn-secondary">
+            &larr; Kembali
         </a>
-
     </div>
 
-
     @if($errors->any())
-
-        <div class="alert alert-danger">
-
-            <strong>Terdapat kesalahan:</strong>
-
-            <ul class="mb-0 mt-2">
-
+        <div class="mb-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-semibold text-rose-800 shadow-2xs">
+            <p class="font-bold">Terdapat kesalahan pengisian:</p>
+            <ul class="mt-2 list-inside list-disc font-medium text-rose-700">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
-
             </ul>
-
         </div>
-
     @endif
 
+    <form action="{{ route('pemeriksaan.update', $pemeriksaan) }}" method="POST" class="space-y-6">
+        @csrf
+        @method('PUT')
 
-    <div class="card">
+        @include('pemeriksaan._form')
 
-        <div class="card-body">
+        <div class="flex justify-end gap-3 rounded-2xl border border-[#DAF1DE] bg-white p-5 shadow-2xs">
+            <a href="{{ route('pemeriksaan.index') }}" class="btn-secondary">
+                Batal
+            </a>
 
-            <form action="{{ route('pemeriksaan.update', $pemeriksaan) }}"
-                  method="POST">
-
-                @csrf
-                @method('PUT')
-
-                @include('pemeriksaan._form')
-
-                <div class="d-flex justify-content-end gap-2">
-
-                    <a href="{{ route('pemeriksaan.index') }}"
-                       class="btn btn-secondary">
-                        Batal
-                    </a>
-
-                    <button type="submit"
-                            class="btn btn-warning">
-                        Simpan Perubahan
-                    </button>
-
-                </div>
-
-            </form>
-
+            <button type="submit" class="btn-primary">
+                Simpan Perubahan
+            </button>
         </div>
-
-    </div>
+    </form>
 
 </div>
 
-@endsection
+</x-layouts.panel>

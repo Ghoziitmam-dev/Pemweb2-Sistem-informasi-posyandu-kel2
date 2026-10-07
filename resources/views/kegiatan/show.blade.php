@@ -1,118 +1,76 @@
-<x-app-layout>
+<x-layouts.panel title="Detail Kegiatan">
 
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
+<div class="mx-auto max-w-3xl">
 
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+    <div class="mb-6 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#051F20]">
                 Detail Kegiatan
-            </h2>
-
-            <a href="{{ route('kegiatan.index') }}"
-               class="px-4 py-2 bg-gray-800 text-white rounded-md">
-                Kembali
-            </a>
-
+            </h1>
+            <p class="mt-1 text-sm font-semibold capitalize text-[#3C5A52]">
+                {{ $kegiatan->judul }}
+            </p>
         </div>
-    </x-slot>
 
+        <a href="{{ route('kegiatan.index') }}" class="btn-secondary">
+            &larr; Kembali
+        </a>
+    </div>
 
-    <div class="py-8">
+    @if (session('success'))
+        <div class="mb-6 flex items-center justify-between rounded-xl border border-[#8EB69B] bg-[#DAF1DE] px-4 py-3 text-sm font-semibold text-[#051F20]">
+            <span>{{ session('success') }}</span>
+        </div>
+    @endif
 
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+    <div class="overflow-hidden rounded-2xl border border-[#DAF1DE] bg-white shadow-sm">
+        <div class="grid gap-px bg-[#DAF1DE]/40 text-sm md:grid-cols-2">
 
-            <div class="bg-white shadow-sm rounded-lg p-6">
+            <div class="bg-white px-5 py-4 md:col-span-2">
+                <dt class="text-xs font-bold uppercase tracking-wider text-[#7FA08C]">Judul Kegiatan</dt>
+                <dd class="mt-1 font-extrabold text-[#051F20] text-lg sm:text-xl">{{ $kegiatan->judul }}</dd>
+            </div>
 
-                <div class="space-y-4">
+            <div class="bg-white px-5 py-4">
+                <dt class="text-xs font-bold uppercase tracking-wider text-[#7FA08C]">Jenis Kegiatan</dt>
+                <dd class="mt-1 font-bold text-[#163832] text-base">{{ ucfirst($kegiatan->jenis) }}</dd>
+            </div>
 
+            <div class="bg-white px-5 py-4">
+                <dt class="text-xs font-bold uppercase tracking-wider text-[#7FA08C]">Status</dt>
+                <dd class="mt-1.5">
+                    @if($kegiatan->status == 'aktif')
+                        <span class="badge-mint">Aktif</span>
+                    @else
+                        <span class="badge-gray">Nonaktif</span>
+                    @endif
+                </dd>
+            </div>
 
-                    <div>
-                        <h3 class="text-sm text-gray-500">
-                            Judul Kegiatan
-                        </h3>
+            <div class="bg-white px-5 py-4 md:col-span-2">
+                <dt class="text-xs font-bold uppercase tracking-wider text-[#7FA08C]">Deskripsi</dt>
+                <dd class="mt-1 font-medium text-[#051F20] leading-relaxed">{{ $kegiatan->deskripsi ?? 'Tidak ada deskripsi' }}</dd>
+            </div>
 
-                        <p class="text-lg font-semibold">
-                            {{ $kegiatan->judul }}
-                        </p>
-                    </div>
+            <div class="bg-white px-5 py-4">
+                <dt class="text-xs font-bold uppercase tracking-wider text-[#7FA08C]">Target Peserta</dt>
+                <dd class="mt-1 font-semibold text-[#163832]">{{ $kegiatan->target_peserta ?? '-' }}</dd>
+            </div>
 
-
-
-                    <div>
-                        <h3 class="text-sm text-gray-500">
-                            Jenis
-                        </h3>
-
-                        <p>
-                            {{ $kegiatan->jenis }}
-                        </p>
-                    </div>
-
-
-
-                    <div>
-                        <h3 class="text-sm text-gray-500">
-                            Deskripsi
-                        </h3>
-
-                        <p>
-                            {{ $kegiatan->deskripsi ?? '-' }}
-                        </p>
-                    </div>
-
-
-
-                    <div>
-                        <h3 class="text-sm text-gray-500">
-                            Target Peserta
-                        </h3>
-
-                        <p>
-                            {{ $kegiatan->target_peserta ?? '-' }}
-                        </p>
-                    </div>
-
-
-
-                    <div>
-                        <h3 class="text-sm text-gray-500">
-                            Foto
-                        </h3>
-
-                        <p>
-                            {{ $kegiatan->foto ?? '-' }}
-                        </p>
-                    </div>
-
-
-
-                    <div>
-                        <h3 class="text-sm text-gray-500">
-                            Status
-                        </h3>
-
-                        @if($kegiatan->status == 'aktif')
-
-                            <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-700">
-                                Aktif
-                            </span>
-
-                        @else
-
-                            <span class="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700">
-                                Nonaktif
-                            </span>
-
-                        @endif
-
-                    </div>
-
-
-                </div>
-
+            <div class="bg-white px-5 py-4">
+                <dt class="text-xs font-bold uppercase tracking-wider text-[#7FA08C]">Foto / Banner</dt>
+                <dd class="mt-1 font-mono text-xs text-[#55766A]">{{ $kegiatan->foto ?? '-' }}</dd>
             </div>
 
         </div>
-
     </div>
 
-</x-app-layout>
+    <div class="mt-6 flex items-center justify-end gap-3">
+        <a href="{{ route('kegiatan.edit', $kegiatan) }}" class="btn-primary">
+            Edit Kegiatan
+        </a>
+    </div>
+
+</div>
+
+</x-layouts.panel>

@@ -1,9 +1,9 @@
 <x-layouts.panel title="Pemeriksaan">
 @php
-    $btn = 'inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:opacity-50';
-    $primary = $btn.' bg-emerald-600 text-white hover:bg-emerald-700';
-    $ghost = $btn.' border border-slate-200 text-slate-600 hover:bg-slate-50';
-    $input = 'block w-full rounded-lg border border-slate-300 text-sm shadow-sm focus:border-emerald-500 focus:ring-emerald-500';
+    $btn = 'inline-flex items-center justify-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#235347] disabled:opacity-50';
+    $primary = 'btn-primary';
+    $ghost = 'btn-secondary text-xs py-1.5 px-3';
+    $input = 'input-field';
 @endphp
 
 <div x-data="pemeriksaanPage()" x-init="init()">
@@ -11,52 +11,87 @@
     {{-- Header --}}
     <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Data Pemeriksaan</h1>
-            <p class="mt-1 text-sm text-slate-500">Hasil pemeriksaan kesehatan warga pada setiap jadwal kegiatan.</p>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#051F20]">Data Pemeriksaan</h1>
+            <p class="mt-1 text-sm text-[#3C5A52]">Hasil pemeriksaan kesehatan warga pada setiap jadwal kegiatan.</p>
         </div>
         <a x-show="isStaff" x-cloak href="/pemeriksaan/create"
-           class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2">
+           class="btn-primary">
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
             Tambah Pemeriksaan
         </a>
     </div>
 
+    {{-- Ringkasan Metric Cards --}}
+    <div class="mb-6 grid grid-cols-2 gap-3.5 lg:grid-cols-4">
+        <div class="rounded-2xl border border-[#DAF1DE] bg-white p-4 shadow-2xs transition hover:shadow-sm">
+            <div class="flex items-center gap-2">
+                <span class="h-2.5 w-2.5 rounded-full bg-[#0B2B26]"></span>
+                <p class="text-xs font-semibold text-[#55766A]">Total Pemeriksaan</p>
+            </div>
+            <p class="mt-1.5 text-2xl sm:text-3xl font-extrabold tabular-nums text-[#051F20]">{{ $stats['total'] ?? 0 }}</p>
+        </div>
+
+        <div class="rounded-2xl border border-[#DAF1DE] bg-white p-4 shadow-2xs transition hover:shadow-sm">
+            <div class="flex items-center gap-2">
+                <span class="h-2.5 w-2.5 rounded-full bg-[#235347]"></span>
+                <p class="text-xs font-semibold text-[#55766A]">Bulan Ini</p>
+            </div>
+            <p class="mt-1.5 text-2xl sm:text-3xl font-extrabold tabular-nums text-[#051F20]">{{ $stats['bulan_ini'] ?? 0 }}</p>
+        </div>
+
+        <div class="rounded-2xl border border-[#DAF1DE] bg-white p-4 shadow-2xs transition hover:shadow-sm">
+            <div class="flex items-center gap-2">
+                <span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+                <p class="text-xs font-semibold text-[#55766A]">Gizi Baik / Normal</p>
+            </div>
+            <p class="mt-1.5 text-2xl sm:text-3xl font-extrabold tabular-nums text-[#051F20]">{{ $stats['normal'] ?? 0 }}</p>
+        </div>
+
+        <div class="rounded-2xl border border-[#DAF1DE] bg-white p-4 shadow-2xs transition hover:shadow-sm">
+            <div class="flex items-center gap-2">
+                <span class="h-2.5 w-2.5 rounded-full bg-[#8EB69B]"></span>
+                <p class="text-xs font-semibold text-[#55766A]">Perlu Perhatian</p>
+            </div>
+            <p class="mt-1.5 text-2xl sm:text-3xl font-extrabold tabular-nums text-[#051F20]">{{ $stats['perlu_perhatian'] ?? 0 }}</p>
+        </div>
+    </div>
+
     {{-- Filter --}}
-    <div class="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div class="mb-6 space-y-3.5 rounded-2xl border border-[#DAF1DE] bg-white p-4 shadow-sm">
         <div class="grid gap-3 md:grid-cols-12">
             <div class="md:col-span-6">
-                <label class="mb-1 block text-xs font-medium text-slate-500">Cari warga</label>
+                <label class="mb-1 block text-xs font-bold text-[#051F20]">Cari warga</label>
                 <input type="search" x-model="filters.search" @input.debounce.400ms="load(1)"
-                       placeholder="Nama atau NIK..." class="{{ $input }}">
+                       placeholder="Nama atau NIK..." class="input-field">
             </div>
             <div class="md:col-span-4">
-                <label class="mb-1 block text-xs font-medium text-slate-500">Tanggal</label>
-                <input type="date" x-model="filters.tanggal" @change="load(1)" class="{{ $input }}">
+                <label class="mb-1 block text-xs font-bold text-[#051F20]">Tanggal Pemeriksaan</label>
+                <input type="date" x-model="filters.tanggal" @change="load(1)" class="input-field">
             </div>
             <div class="flex items-end md:col-span-2">
                 <button type="button" @click="resetFilter()"
                         :disabled="!filters.search && !filters.tanggal"
-                        class="{{ $ghost }} w-full py-2.5 text-sm">Reset</button>
+                        class="btn-secondary w-full py-2.5 text-sm">Reset</button>
             </div>
         </div>
     </div>
 
     {{-- Tabel (tablet ke atas) --}}
-    <div class="hidden overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm md:block">
+    <div class="hidden overflow-hidden rounded-2xl border border-[#DAF1DE] bg-white shadow-sm md:block">
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm">
-                <thead class="bg-emerald-50 text-left text-xs font-semibold text-emerald-900">
+                <thead class="bg-[#DAF1DE]/50 text-left text-xs font-bold uppercase tracking-wider text-[#051F20]">
                     <tr>
-                        <th class="px-4 py-3">No</th>
-                        <th class="px-4 py-3">Warga</th>
-                        <th class="px-4 py-3">Jadwal</th>
-                        <th class="px-4 py-3">Tanggal</th>
-                        <th class="px-4 py-3 text-right">Berat</th>
-                        <th class="px-4 py-3 text-right">Tinggi</th>
-                        <th class="px-4 py-3">Tekanan darah</th>
-                        <th class="px-4 py-3">Status gizi</th>
-                        <th class="px-4 py-3">Pemeriksa</th>
-                        <th class="px-4 py-3 text-right">Aksi</th>
+                        <th class="px-4 py-3.5">No</th>
+                        <th class="px-4 py-3.5">Warga</th>
+                        <th class="px-4 py-3.5">Jadwal</th>
+                        <th class="px-4 py-3.5">Tanggal</th>
+                        <th class="px-4 py-3.5 text-right">Berat</th>
+                        <th class="px-4 py-3.5 text-right">Tinggi</th>
+                        <th class="px-4 py-3.5">Tekanan Darah</th>
+                        <th class="px-4 py-3.5">Status Gizi</th>
+                        <th class="px-4 py-3.5">Pemeriksa</th>
+                        <th class="px-4 py-3.5 text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -64,31 +99,31 @@
                     {{-- Skeleton --}}
                     <template x-for="n in (loading && !items.length ? 5 : 0)" :key="'s'+n">
                         <tr class="animate-pulse">
-                            <td colspan="10" class="px-4 py-4"><div class="h-4 rounded bg-slate-100"></div></td>
+                            <td colspan="10" class="px-4 py-4"><div class="h-4 rounded bg-[#DAF1DE]/40"></div></td>
                         </tr>
                     </template>
 
                     <template x-for="(item, idx) in items" :key="item.id">
-                        <tr class="transition hover:bg-emerald-50/40">
-                            <td class="px-4 py-3 tabular-nums text-slate-500" x-text="no(idx)"></td>
-                            <td class="px-4 py-3">
-                                <p class="font-medium text-slate-900" x-text="f.warga(item)"></p>
-                                <p class="text-xs text-slate-500" x-text="f.nik(item)"></p>
+                        <tr class="transition hover:bg-[#DAF1DE]/20">
+                            <td class="px-4 py-3.5 tabular-nums text-[#55766A] font-semibold" x-text="no(idx)"></td>
+                            <td class="px-4 py-3.5">
+                                <p class="font-bold text-[#051F20]" x-text="f.warga(item)"></p>
+                                <p class="text-xs font-mono text-[#55766A]" x-text="f.nik(item)"></p>
                             </td>
-                            <td class="px-4 py-3 text-slate-600" x-text="f.jadwal(item)"></td>
-                            <td class="whitespace-nowrap px-4 py-3 text-slate-600" x-text="tgl(f.tanggal(item))"></td>
-                            <td class="whitespace-nowrap px-4 py-3 text-right tabular-nums" x-text="unit(f.berat(item), 'kg')"></td>
-                            <td class="whitespace-nowrap px-4 py-3 text-right tabular-nums" x-text="unit(f.tinggi(item), 'cm')"></td>
-                            <td class="whitespace-nowrap px-4 py-3 tabular-nums" x-text="f.tensi(item) || '-'"></td>
-                            <td class="px-4 py-3">
-                                <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset"
+                            <td class="px-4 py-3.5 text-[#163832] font-medium" x-text="f.jadwal(item)"></td>
+                            <td class="whitespace-nowrap px-4 py-3.5 text-[#163832] font-medium" x-text="tgl(f.tanggal(item))"></td>
+                            <td class="whitespace-nowrap px-4 py-3.5 text-right tabular-nums font-bold text-[#051F20]" x-text="unit(f.berat(item), 'kg')"></td>
+                            <td class="whitespace-nowrap px-4 py-3.5 text-right tabular-nums font-bold text-[#051F20]" x-text="unit(f.tinggi(item), 'cm')"></td>
+                            <td class="whitespace-nowrap px-4 py-3.5 tabular-nums font-medium text-[#163832]" x-text="f.tensi(item) || '-'"></td>
+                            <td class="px-4 py-3.5">
+                                <span class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset"
                                       :class="gizi(f.gizi(item))" x-text="f.gizi(item) || '-'"></span>
                             </td>
-                            <td class="px-4 py-3 text-slate-600" x-text="f.pemeriksa(item) || '-'"></td>
-                            <td class="px-4 py-3">
-                                <div class="flex justify-end gap-1">
-                                    <a x-show="isStaff" :href="`/pemeriksaan/${item.id}/edit`" class="{{ $ghost }}">Edit</a>
-                                    <button x-show="isStaff" @click="hapus(item)" class="{{ $btn }} text-rose-600 hover:bg-rose-50">Hapus</button>
+                            <td class="px-4 py-3.5 text-[#163832] font-medium" x-text="f.pemeriksa(item) || '-'"></td>
+                            <td class="px-4 py-3.5">
+                                <div class="flex justify-end gap-1.5">
+                                    <a x-show="isStaff" :href="`/pemeriksaan/${item.id}/edit`" class="btn-secondary text-xs px-2.5 py-1">Edit</a>
+                                    <button x-show="isStaff" @click="hapus(item)" class="btn-danger text-xs px-2.5 py-1">Hapus</button>
                                 </div>
                             </td>
                         </tr>
@@ -98,24 +133,24 @@
         </div>
     </div>
 
-    {{-- Kartu (HP) --}}
-    <div class="space-y-3 md:hidden">
+    {{-- Kartu (Smartphone) --}}
+    <div class="space-y-3.5 md:hidden">
         <template x-for="item in items" :key="'m'+item.id">
-            <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <article class="card-panel flex flex-col gap-3">
                 <div class="flex items-start justify-between gap-3">
                     <div class="min-w-0">
-                        <p class="truncate font-semibold text-slate-900" x-text="f.warga(item)"></p>
-                        <p class="text-xs text-slate-500" x-text="f.nik(item)"></p>
+                        <p class="truncate font-bold text-[#051F20] text-base" x-text="f.warga(item)"></p>
+                        <p class="text-xs font-mono text-[#55766A]" x-text="f.nik(item)"></p>
                     </div>
-                    <span class="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset"
+                    <span class="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-bold ring-1 ring-inset"
                           :class="gizi(f.gizi(item))" x-text="f.gizi(item) || '-'"></span>
                 </div>
-                <p class="mt-2 text-sm text-slate-600" x-text="f.jadwal(item) + ' · ' + tgl(f.tanggal(item))"></p>
+                <p class="text-xs font-semibold text-[#163832]" x-text="f.jadwal(item) + ' · ' + tgl(f.tanggal(item))"></p>
 
-                <dl class="mt-3 grid grid-cols-3 gap-2 rounded-xl bg-emerald-50/60 p-3 text-center">
-                    <div><dt class="text-xs text-slate-500">Berat</dt><dd class="text-sm font-semibold tabular-nums text-slate-900" x-text="unit(f.berat(item), 'kg')"></dd></div>
-                    <div><dt class="text-xs text-slate-500">Tinggi</dt><dd class="text-sm font-semibold tabular-nums text-slate-900" x-text="unit(f.tinggi(item), 'cm')"></dd></div>
-                    <div><dt class="text-xs text-slate-500">Tensi</dt><dd class="text-sm font-semibold tabular-nums text-slate-900" x-text="f.tensi(item) || '-'"></dd></div>
+                <dl class="grid grid-cols-3 gap-2 rounded-xl bg-[#DAF1DE]/40 p-3 text-center border border-[#DAF1DE]">
+                    <div><dt class="text-xs text-[#55766A]">Berat</dt><dd class="text-sm font-bold tabular-nums text-[#051F20]" x-text="unit(f.berat(item), 'kg')"></dd></div>
+                    <div><dt class="text-xs text-[#55766A]">Tinggi</dt><dd class="text-sm font-bold tabular-nums text-[#051F20]" x-text="unit(f.tinggi(item), 'cm')"></dd></div>
+                    <div><dt class="text-xs text-[#55766A]">Tensi</dt><dd class="text-sm font-bold tabular-nums text-[#051F20]" x-text="f.tensi(item) || '-'"></dd></div>
                 </dl>
 
                 <div class="mt-3 flex items-center justify-between gap-2">

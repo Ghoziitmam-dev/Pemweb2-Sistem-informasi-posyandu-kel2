@@ -26,9 +26,17 @@ class WargaController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        $stats = [
+            'total' => Warga::count(),
+            'balita' => Warga::where('kategori', 'balita')->count(),
+            'ibu_hamil' => Warga::where('kategori', 'ibu_hamil')->count(),
+            'lansia' => Warga::where('kategori', 'lansia')->count(),
+        ];
+
         return view('warga.index', [
             'wargas' => $wargas,
             'kategoris' => $this->kategoris,
+            'stats' => $stats,
         ]);
     }
 

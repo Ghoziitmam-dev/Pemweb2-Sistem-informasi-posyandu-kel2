@@ -1,49 +1,38 @@
 <x-layouts.panel title="Tambah Warga">
 
-@php
-    $btn = 'inline-flex items-center justify-center rounded-lg px-3 py-1.5 text-xs font-medium transition';
-    $primary = $btn.' bg-emerald-600 text-white hover:bg-emerald-700';
-    $ghost = $btn.' border border-slate-200 text-slate-600 hover:bg-slate-50';
-@endphp
-
 <div class="mx-auto max-w-3xl">
 
-    <div class="mb-6 flex items-end justify-between">
-
+    <div class="mb-6 flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900">
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#051F20]">
                 Tambah Warga
             </h1>
-
-            <p class="mt-1 text-sm text-slate-500">
-                Daftarkan warga baru ke Posyandu.
+            <p class="mt-1 text-sm text-[#3C5A52]">
+                Daftarkan warga baru ke sistem Posyandu.
             </p>
         </div>
 
-        <a href="{{ route('warga.index') }}" class="{{ $ghost }}">
+        <a href="{{ route('warga.index') }}" class="btn-secondary">
             &larr; Kembali
         </a>
-
     </div>
 
     <form method="POST"
           action="{{ route('warga.store') }}"
-          class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          class="rounded-2xl border border-[#DAF1DE] bg-white p-6 shadow-sm">
 
         @csrf
 
         @include('warga._form', ['warga' => null])
 
-        <div class="mt-6 flex justify-end gap-2 border-t border-slate-100 pt-5">
-
-            <a href="{{ route('warga.index') }}" class="{{ $ghost }}">
+        <div class="mt-8 flex justify-end gap-3 border-t border-[#DAF1DE] pt-5">
+            <a href="{{ route('warga.index') }}" class="btn-secondary">
                 Batal
             </a>
 
-            <button class="{{ $primary }}">
+            <button type="submit" class="btn-primary">
                 Simpan Warga
             </button>
-
         </div>
 
     </form>

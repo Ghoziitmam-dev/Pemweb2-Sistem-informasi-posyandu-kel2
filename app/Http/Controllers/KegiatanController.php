@@ -9,7 +9,24 @@ class KegiatanController extends Controller
 {
     public function index(Request $request)
     {
-        $kegiatans = Kegiatan::paginate(10);
+        $query = Kegiatan::query();
+
+        if ($request->filled('q')) {
+            $query->where('judul', 'like', "%{$request->q}%")
+                  ->orWhere('jenis', 'like', "%{$request->q}%");
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $kegiatans = $query->latest()->paginate(10)->withQueryString();
+
+        $stats = [
+            'total' => Kegiatan::count(),
+            'aktif' => Kegiatan::where('status', 'aktif')->count(),
+            'nonaktif' => Kegiatan::where('status', 'nonaktif')->count(),
+        ];
 
         return view('kegiatan.index', [
             'kegiatans' => $kegiatans,
@@ -17,6 +34,7 @@ class KegiatanController extends Controller
                 'aktif' => 'Aktif',
                 'nonaktif' => 'Nonaktif',
             ],
+            'stats' => $stats,
         ]);
     }
 

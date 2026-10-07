@@ -1,10 +1,10 @@
 <x-layouts.panel title="Jadwal">
 @php
-    $btn = 'inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:opacity-50';
-    $primary = $btn.' bg-emerald-600 text-white hover:bg-emerald-700';
-    $ghost = $btn.' border border-slate-200 text-slate-600 hover:bg-slate-50';
-    $input = 'mt-1 block w-full rounded-lg border border-slate-300 text-sm shadow-sm focus:border-emerald-500 focus:ring-emerald-500';
-    $label = 'block text-sm font-medium text-slate-700';
+    $btn = 'inline-flex items-center justify-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#235347] disabled:opacity-50';
+    $primary = 'btn-primary';
+    $ghost = 'btn-secondary text-xs py-1.5 px-3';
+    $input = 'input-field';
+    $label = 'input-label';
 @endphp
 
 <div x-data="jadwalPage()" x-init="init()">
@@ -12,53 +12,51 @@
     {{-- Header --}}
     <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-slate-900">Jadwal Kegiatan</h1>
-            <p class="mt-1 text-sm text-slate-500">Jadwal pelaksanaan kegiatan Posyandu beserta pendaftaran pesertanya.</p>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#051F20]">Jadwal Kegiatan</h1>
+            <p class="mt-1 text-sm text-[#3C5A52]">Jadwal pelaksanaan kegiatan Posyandu beserta pendaftaran pesertanya.</p>
         </div>
         <button x-show="isStaff" x-cloak @click="openCreate()"
-                class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2">
+                class="btn-primary">
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
             Tambah Jadwal
         </button>
     </div>
 
     {{-- Ringkasan --}}
-    <div class="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <div class="mb-6 grid grid-cols-2 gap-3.5 lg:grid-cols-4">
         <template x-for="s in stats" :key="s.label">
             <button type="button" @click="filters.status = s.status; load(1)"
-                    class="rounded-2xl border bg-white p-4 text-left shadow-sm transition hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
-                    :class="filters.status === s.status ? 'border-emerald-400 ring-1 ring-emerald-200' : 'border-slate-200'">
+                    class="rounded-2xl border bg-white p-4 text-left shadow-2xs transition hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#235347]"
+                    :class="filters.status === s.status ? 'border-[#8EB69B] ring-2 ring-[#DAF1DE]' : 'border-[#DAF1DE]'">
                 <div class="flex items-center gap-2">
-                    <span class="h-2 w-2 rounded-full" :class="s.dot"></span>
-                    <p class="text-xs font-medium text-slate-500" x-text="s.label"></p>
+                    <span class="h-2.5 w-2.5 rounded-full" :class="s.dot"></span>
+                    <p class="text-xs font-semibold text-[#55766A]" x-text="s.label"></p>
                 </div>
-                <p class="mt-1.5 text-2xl font-bold tabular-nums" :class="s.color" x-text="s.value"></p>
+                <p class="mt-1.5 text-2xl sm:text-3xl font-extrabold tabular-nums text-[#051F20]" x-text="s.value"></p>
             </button>
         </template>
     </div>
 
     {{-- Filter --}}
-    <div class="mb-6 space-y-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div class="mb-6 space-y-3.5 rounded-2xl border border-[#DAF1DE] bg-white p-4 shadow-sm">
         <div class="grid gap-3 md:grid-cols-12">
             <input type="search" x-model="filters.search" @input.debounce.400ms="load(1)"
                    placeholder="Cari kegiatan atau lokasi..."
-                   class="{{ $input }} mt-0 md:col-span-6">
+                   class="input-field md:col-span-6">
             <input type="date" x-model="filters.dari" @change="load(1)" title="Dari tanggal"
-                   class="{{ $input }} mt-0 md:col-span-3">
+                   class="input-field md:col-span-3">
             <input type="date" x-model="filters.sampai" @change="load(1)" title="Sampai tanggal"
-                   class="{{ $input }} mt-0 md:col-span-3">
+                   class="input-field md:col-span-3">
         </div>
         <div class="flex items-center gap-2 overflow-x-auto pb-1">
             <template x-for="chip in chips" :key="chip[0]">
                 <button @click="filters.status = chip[0]; load(1)"
-                        class="whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm font-medium transition"
-                        :class="filters.status === chip[0]
-                            ? 'bg-emerald-600 text-white shadow-sm'
-                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+                        class="chip-filter"
+                        :class="filters.status === chip[0] ? 'chip-active' : 'chip-idle'"
                         x-text="chip[1]"></button>
             </template>
             <button x-show="filters.search || filters.dari || filters.sampai || filters.status"
-                    @click="resetFilter()" class="ml-auto whitespace-nowrap text-sm text-slate-500 underline hover:text-slate-700">
+                    @click="resetFilter()" class="ml-auto whitespace-nowrap text-sm text-[#163832] font-semibold underline hover:text-[#051F20]">
                 Reset
             </button>
         </div>
@@ -69,34 +67,34 @@
 
         {{-- Skeleton --}}
         <template x-for="n in (loading && !items.length ? 6 : 0)" :key="'s'+n">
-            <div class="animate-pulse space-y-4 rounded-2xl border border-slate-200 bg-white p-5">
+            <div class="animate-pulse space-y-4 rounded-2xl border border-[#DAF1DE] bg-white p-5">
                 <div class="flex gap-4">
-                    <div class="h-16 w-16 rounded-xl bg-slate-100"></div>
+                    <div class="h-16 w-16 rounded-xl bg-[#DAF1DE]/40"></div>
                     <div class="flex-1 space-y-2 pt-1">
-                        <div class="h-3 w-1/3 rounded bg-slate-100"></div>
-                        <div class="h-4 w-3/4 rounded bg-slate-100"></div>
+                        <div class="h-3 w-1/3 rounded bg-[#DAF1DE]/40"></div>
+                        <div class="h-4 w-3/4 rounded bg-[#DAF1DE]/40"></div>
                     </div>
                 </div>
-                <div class="h-3 w-1/2 rounded bg-slate-100"></div>
-                <div class="h-3 w-2/3 rounded bg-slate-100"></div>
+                <div class="h-3 w-1/2 rounded bg-[#DAF1DE]/40"></div>
+                <div class="h-3 w-2/3 rounded bg-[#DAF1DE]/40"></div>
             </div>
         </template>
 
         <template x-for="item in items" :key="item.id">
-            <article class="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md"
+            <article class="flex flex-col rounded-2xl border border-[#DAF1DE] bg-white shadow-sm transition hover:shadow-md"
                      :class="item.status === 'batal' ? 'opacity-70' : ''">
 
                 <div class="flex gap-4 p-5">
-                    <div class="w-16 shrink-0 rounded-xl border border-emerald-100 bg-emerald-50 py-2 text-center">
-                        <div class="text-2xl font-bold leading-none text-emerald-700" x-text="day(item)"></div>
-                        <div class="mt-1 text-xs font-medium uppercase tracking-wide text-emerald-600" x-text="mon(item)"></div>
+                    <div class="w-16 shrink-0 rounded-xl border border-[#BCDCC6] bg-[#DAF1DE]/60 py-2.5 text-center shadow-2xs">
+                        <div class="text-2xl font-extrabold leading-none text-[#0B2B26]" x-text="day(item)"></div>
+                        <div class="mt-1 text-xs font-bold uppercase tracking-wide text-[#235347]" x-text="mon(item)"></div>
                     </div>
                     <div class="min-w-0 flex-1">
-                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset"
+                        <span class="inline-flex items-center rounded-full px-3 py-0.5 text-xs font-bold ring-1 ring-inset"
                               :class="badge(item.status)" x-text="item.status_label"></span>
-                        <h3 class="mt-1.5 truncate text-base font-semibold text-slate-900"
+                        <h3 class="mt-1.5 truncate text-base font-bold text-[#051F20]"
                             :title="item.kegiatan?.judul" x-text="item.kegiatan?.judul"></h3>
-                        <p class="text-sm text-slate-500" x-text="tanggalID(item)"></p>
+                        <p class="text-xs font-medium text-[#55766A]" x-text="tanggalID(item)"></p>
                     </div>
                 </div>
 

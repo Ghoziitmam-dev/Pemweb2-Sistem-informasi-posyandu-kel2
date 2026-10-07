@@ -1,131 +1,110 @@
-<x-app-layout>
+<x-layouts.panel title="Edit Kegiatan">
 
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Edit Kegiatan
-        </h2>
-    </x-slot>
+<div class="mx-auto max-w-3xl">
 
+    <div class="mb-6 flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#051F20]">
+                Edit Kegiatan
+            </h1>
+            <p class="mt-1 text-sm text-[#3C5A52]">
+                Perbarui rincian dan status kegiatan Posyandu.
+            </p>
+        </div>
 
-    <div class="py-8">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+        <a href="{{ route('kegiatan.index') }}" class="btn-secondary">
+            &larr; Kembali
+        </a>
+    </div>
 
-            <div class="bg-white shadow-sm rounded-lg p-6">
+    <form method="POST" action="{{ route('kegiatan.update', $kegiatan) }}" class="rounded-2xl border border-[#DAF1DE] bg-white p-6 shadow-sm">
+        @csrf
+        @method('PUT')
 
-                <form method="POST" action="{{ route('kegiatan.update', $kegiatan) }}">
+        <div class="space-y-5">
 
-                    @csrf
-                    @method('PUT')
+            <div>
+                <label class="input-label">Judul Kegiatan</label>
+                <input
+                    type="text"
+                    name="judul"
+                    class="input-field mt-1.5"
+                    value="{{ old('judul', $kegiatan->judul) }}"
+                    required
+                />
+                @error('judul') <p class="mt-1 text-xs font-semibold text-rose-600">{{ $message }}</p> @enderror
+            </div>
 
-                    <div class="space-y-4">
+            <div class="grid gap-5 md:grid-cols-2">
+                <div>
+                    <label class="input-label">Jenis Kegiatan</label>
+                    <input
+                        type="text"
+                        name="jenis"
+                        class="input-field mt-1.5"
+                        value="{{ old('jenis', $kegiatan->jenis) }}"
+                        required
+                    />
+                    @error('jenis') <p class="mt-1 text-xs font-semibold text-rose-600">{{ $message }}</p> @enderror
+                </div>
 
+                <div>
+                    <label class="input-label">Target Peserta</label>
+                    <input
+                        type="text"
+                        name="target_peserta"
+                        class="input-field mt-1.5"
+                        value="{{ old('target_peserta', $kegiatan->target_peserta) }}"
+                    />
+                    @error('target_peserta') <p class="mt-1 text-xs font-semibold text-rose-600">{{ $message }}</p> @enderror
+                </div>
+            </div>
 
-                        <div>
-                            <x-input-label value="Judul Kegiatan"/>
+            <div>
+                <label class="input-label">Deskripsi</label>
+                <textarea
+                    name="deskripsi"
+                    rows="3"
+                    class="input-field mt-1.5"
+                >{{ old('deskripsi', $kegiatan->deskripsi) }}</textarea>
+                @error('deskripsi') <p class="mt-1 text-xs font-semibold text-rose-600">{{ $message }}</p> @enderror
+            </div>
 
-                            <x-text-input
-                                name="judul"
-                                class="mt-1 block w-full"
-                                value="{{ old('judul', $kegiatan->judul) }}"
-                            />
+            <div class="grid gap-5 md:grid-cols-2">
+                <div>
+                    <label class="input-label">Status Kegiatan</label>
+                    <select name="status" class="input-field mt-1.5">
+                        <option value="aktif" @selected(old('status', $kegiatan->status) == 'aktif')>Aktif</option>
+                        <option value="nonaktif" @selected(old('status', $kegiatan->status) == 'nonaktif')>Nonaktif</option>
+                    </select>
+                    @error('status') <p class="mt-1 text-xs font-semibold text-rose-600">{{ $message }}</p> @enderror
+                </div>
 
-                            <x-input-error :messages="$errors->get('judul')" />
-                        </div>
+                <div>
+                    <label class="input-label">Foto / Banner (opsional)</label>
+                    <input
+                        type="text"
+                        name="foto"
+                        class="input-field mt-1.5"
+                        value="{{ old('foto', $kegiatan->foto) }}"
+                    />
+                </div>
+            </div>
 
+            <div class="mt-8 flex justify-end gap-3 border-t border-[#DAF1DE] pt-5">
+                <a href="{{ route('kegiatan.show', $kegiatan) }}" class="btn-secondary">
+                    Batal
+                </a>
 
-
-                        <div>
-                            <x-input-label value="Jenis Kegiatan"/>
-
-                            <x-text-input
-                                name="jenis"
-                                class="mt-1 block w-full"
-                                value="{{ old('jenis', $kegiatan->jenis) }}"
-                            />
-
-                            <x-input-error :messages="$errors->get('jenis')" />
-                        </div>
-
-
-
-                        <div>
-                            <x-input-label value="Deskripsi"/>
-
-                            <textarea
-                                name="deskripsi"
-                                class="mt-1 block w-full border-gray-300 rounded-md"
-                            >{{ old('deskripsi', $kegiatan->deskripsi) }}</textarea>
-
-                        </div>
-
-
-
-                        <div>
-                            <x-input-label value="Target Peserta"/>
-
-                            <x-text-input
-                                name="target_peserta"
-                                class="mt-1 block w-full"
-                                value="{{ old('target_peserta', $kegiatan->target_peserta) }}"
-                            />
-
-                        </div>
-
-
-
-                        <div>
-                            <x-input-label value="Foto"/>
-
-                            <x-text-input
-                                name="foto"
-                                class="mt-1 block w-full"
-                                value="{{ old('foto', $kegiatan->foto) }}"
-                            />
-
-                        </div>
-
-
-
-                        <div>
-                            <x-input-label value="Status"/>
-
-                            <select name="status"
-                                class="mt-1 block w-full border-gray-300 rounded-md">
-
-                                <option value="aktif"
-                                    @selected($kegiatan->status == 'aktif')>
-                                    Aktif
-                                </option>
-
-                                <option value="nonaktif"
-                                    @selected($kegiatan->status == 'nonaktif')>
-                                    Nonaktif
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-
-                        <div class="flex justify-end">
-
-                            <button
-                                class="px-4 py-2 bg-indigo-600 text-white rounded-md">
-                                Update
-                            </button>
-
-                        </div>
-
-
-                    </div>
-
-                </form>
-
+                <button type="submit" class="btn-primary">
+                    Simpan Perubahan
+                </button>
             </div>
 
         </div>
-    </div>
 
+    </form>
 
-</x-app-layout>
+</div>
+
+</x-layouts.panel>

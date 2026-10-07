@@ -4,10 +4,61 @@
 
 @layer base {
     body {
-        @apply bg-slate-50 text-slate-900 antialiased;
+        @apply bg-[#EAF5EC]/40 text-[#051F20] antialiased selection:bg-[#8EB69B] selection:text-[#051F20];
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 }
 
 [x-cloak] {
     display: none !important;
+}
+
+@layer components {
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl bg-[#0B2B26] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#051F20] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#235347] focus-visible:ring-offset-2 disabled:opacity-50;
+    }
+
+    .btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl border border-[#BCDCC6] bg-white px-4 py-2.5 text-sm font-semibold text-[#163832] shadow-sm transition hover:bg-[#DAF1DE]/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#235347] disabled:opacity-50;
+    }
+
+    .btn-ghost {
+        @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-[#163832] transition hover:bg-[#DAF1DE]/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#235347];
+    }
+
+    .btn-danger {
+        @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-rose-600 transition hover:bg-rose-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500;
+    }
+
+    .card-panel {
+        @apply rounded-2xl border border-[#DAF1DE] bg-white p-5 shadow-sm transition hover:shadow-md;
+    }
+
+    .input-field {
+        @apply block w-full rounded-xl border border-[#BCDCC6] bg-white px-3.5 py-2.5 text-sm text-[#051F20] shadow-sm transition placeholder:text-[#7FA08C] focus:border-[#235347] focus:outline-none focus:ring-1 focus:ring-[#235347];
+    }
+
+    .input-label {
+        @apply block text-sm font-semibold text-[#051F20];
+    }
+
+    .badge-mint {
+        @apply inline-flex items-center rounded-full border border-[#8EB69B]/40 bg-[#DAF1DE] px-3 py-1 text-xs font-semibold text-[#0B2B26];
+    }
+
+    .badge-gray {
+        @apply inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600;
+    }
+
+    .chip-filter {
+        @apply whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition cursor-pointer;
+    }
+
+    .chip-active {
+        @apply bg-[#0B2B26] text-white shadow-sm;
+    }
+
+    .chip-idle {
+        @apply bg-[#DAF1DE]/70 text-[#163832] hover:bg-[#BCDCC6]/60;
+    }
 }

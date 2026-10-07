@@ -3,10 +3,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Beranda' }} · Posyandu</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         [x-cloak]{display:none!important}
+        body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
     </style>
 </head>
 @php
@@ -16,47 +24,52 @@
         ['label'=>'Jadwal','route'=>'jadwal.index','match'=>'jadwal.*'],
         ['label'=>'Pemeriksaan','route'=>'pemeriksaan.index','match'=>'pemeriksaan.*'],
     ];
-    $linkBase = 'whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition';
-    $linkActive = 'bg-emerald-50 text-emerald-700';
-    $linkIdle = 'text-slate-600 hover:bg-slate-100';
+    $linkBase = 'whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-150';
+    $linkActive = 'bg-[#DAF1DE] text-[#051F20] shadow-xs border border-[#8EB69B]/40 font-bold';
+    $linkIdle = 'text-[#163832] hover:bg-[#DAF1DE]/50 hover:text-[#051F20]';
 @endphp
-<body class="min-h-screen bg-slate-50 text-slate-800 antialiased">
+<body class="min-h-screen bg-[#DAF1DE]/25 text-[#051F20] antialiased">
 <header
     x-data="{
-        user:null,
-        menuOpen:false,
+        user: {{ Auth::check() ? json_encode(['name' => Auth::user()->name, 'role' => Auth::user()->role ?? 'Admin']) : 'null' }},
+        menuOpen: false,
         async logout(){
-            try{await api('/auth/logout',{method:'POST'});}catch(e){}
-            auth.clear();
-            window.location.href='/login';
+            try { await api('/auth/logout',{method:'POST'}); } catch(e){}
+            if(window.auth && window.auth.clear) window.auth.clear();
+            const form = document.getElementById('global-logout-form');
+            if(form) form.submit();
+            else window.location.href='/login';
         }
     }"
-    x-init="getMe().then(u=>user=u).catch(()=>{})"
+    x-init="if(!user && window.getMe) getMe().then(u=>user=u).catch(()=>{})"
     @keydown.escape.window="menuOpen=false"
-    class="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur"
+    class="sticky top-0 z-30 border-b border-[#DAF1DE] bg-white/95 backdrop-blur-md shadow-xs"
 >
-    <div class="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 sm:px-6 lg:px-8">
+    <div class="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
+        <!-- Mobile menu toggle -->
         <button
             type="button"
-            @click="menuOpen=!menuOpen"
+            @click="menuOpen = !menuOpen"
             :aria-expanded="menuOpen"
             aria-label="Buka menu"
-            class="-ml-1 rounded-lg p-2 text-slate-600 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 md:hidden"
+            class="-ml-1 rounded-xl p-2 text-[#163832] hover:bg-[#DAF1DE]/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#235347] md:hidden"
         >
-            <svg x-show="!menuOpen" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <svg x-show="!menuOpen" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
-            <svg x-show="menuOpen" x-cloak class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <svg x-show="menuOpen" x-cloak class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
             </svg>
         </button>
 
-        <a href="/" class="flex shrink-0 items-center gap-2">
-            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 text-lg font-bold text-white">P</span>
-            <span class="hidden text-base font-semibold text-slate-900 sm:block">Posyandu</span>
+        <!-- Brand Logo -->
+        <a href="{{ route('jadwal.index') }}" class="flex shrink-0 items-center gap-2.5 group">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0B2B26] text-lg font-bold text-[#DAF1DE] shadow-xs transition-transform group-hover:scale-105">P</span>
+            <span class="text-base font-extrabold tracking-tight text-[#051F20]">Posyandu</span>
         </a>
 
-        <nav class="hidden flex-1 items-center gap-1 md:flex">
+        <!-- Desktop Navigation Menu -->
+        <nav class="hidden flex-1 items-center gap-1.5 md:flex ml-4">
             @foreach($menu as $m)
                 <a
                     href="{{ route($m['route']) }}"
@@ -69,31 +82,62 @@
 
         <div class="flex-1 md:hidden"></div>
 
-        <div x-show="user" x-cloak class="flex shrink-0 items-center gap-3">
-            <div class="hidden text-right sm:block">
-                <p class="text-sm font-medium leading-tight text-slate-900" x-text="user?.name"></p>
-                <p class="text-xs capitalize text-slate-500" x-text="user?.role"></p>
+        <!-- User Profile & Action -->
+        @auth
+            <div class="flex shrink-0 items-center gap-3">
+                <div class="hidden text-right sm:block leading-tight">
+                    <p class="text-sm font-bold text-[#051F20]">{{ Auth::user()->name }}</p>
+                    <p class="text-xs font-semibold capitalize text-[#7FA08C]">{{ Auth::user()->role ?? 'Admin Posyandu' }}</p>
+                </div>
+                <span class="flex h-9 w-9 items-center justify-center rounded-full border border-[#8EB69B]/40 bg-[#DAF1DE] text-sm font-bold text-[#0B2B26]">
+                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                </span>
+                <form id="global-logout-form" method="POST" action="{{ route('logout') }}" class="inline">
+                    @csrf
+                    <button
+                        type="submit"
+                        class="rounded-xl border border-[#BCDCC6] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#163832] shadow-2xs transition hover:bg-[#DAF1DE]/60 hover:text-[#051F20]"
+                    >
+                        Keluar
+                    </button>
+                </form>
             </div>
-            <span
-                class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-sm font-semibold text-emerald-700"
-                x-text="(user?.name||'?').charAt(0).toUpperCase()"
-            ></span>
-            <button
-                @click="logout()"
-                class="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-100"
-            >
-                Keluar
-            </button>
-        </div>
+        @else
+            <div x-show="user" x-cloak class="flex shrink-0 items-center gap-3">
+                <div class="hidden text-right sm:block leading-tight">
+                    <p class="text-sm font-bold text-[#051F20]" x-text="user?.name"></p>
+                    <p class="text-xs font-semibold capitalize text-[#7FA08C]" x-text="user?.role || 'User'"></p>
+                </div>
+                <span
+                    class="flex h-9 w-9 items-center justify-center rounded-full border border-[#8EB69B]/40 bg-[#DAF1DE] text-sm font-bold text-[#0B2B26]"
+                    x-text="(user?.name||'?').charAt(0).toUpperCase()"
+                ></span>
+                <button
+                    @click="logout()"
+                    class="rounded-xl border border-[#BCDCC6] bg-white px-3.5 py-1.5 text-xs font-semibold text-[#163832] shadow-2xs transition hover:bg-[#DAF1DE]/60 hover:text-[#051F20]"
+                >
+                    Keluar
+                </button>
+            </div>
+            <div x-show="!user" class="flex items-center gap-2">
+                <a href="{{ route('login') }}" class="rounded-xl px-3.5 py-1.5 text-xs font-semibold text-[#163832] hover:bg-[#DAF1DE]/50">Masuk</a>
+            </div>
+        @endauth
     </div>
 
+    <!-- Mobile Navigation Drawer -->
     <nav
         x-show="menuOpen"
         x-cloak
-        x-transition.opacity
-        class="border-t border-slate-100 bg-white px-4 py-2 md:hidden"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 -translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-2"
+        class="border-t border-[#DAF1DE] bg-white px-4 py-3 shadow-md md:hidden"
     >
-        <div class="mx-auto flex max-w-7xl flex-col gap-1">
+        <div class="mx-auto flex max-w-7xl flex-col gap-1.5">
             @foreach($menu as $m)
                 <a
                     href="{{ route($m['route']) }}"
@@ -106,7 +150,7 @@
     </nav>
 </header>
 
-<main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+<main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
     {{ $slot }}
 </main>
 
@@ -122,10 +166,10 @@
     <template x-for="t in items" :key="t.id">
         <div
             x-transition
-            class="pointer-events-auto w-full max-w-sm rounded-xl px-4 py-3 text-sm font-medium shadow-lg ring-1"
+            class="pointer-events-auto w-full max-w-sm rounded-xl px-4 py-3 text-sm font-semibold shadow-lg ring-1"
             :class="t.type==='error'
                 ? 'bg-rose-50 text-rose-800 ring-rose-200'
-                : 'bg-emerald-50 text-emerald-800 ring-emerald-200'"
+                : 'bg-[#DAF1DE] text-[#051F20] ring-[#8EB69B]'"
             x-text="t.message"
         ></div>
     </template>

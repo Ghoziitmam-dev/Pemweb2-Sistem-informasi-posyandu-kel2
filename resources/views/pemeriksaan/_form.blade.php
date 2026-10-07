@@ -1,253 +1,224 @@
-<div class="form-section">
-    <div class="form-section-title">
-        <span>Informasi Pemeriksaan</span>
-    </div>
+<div class="space-y-6">
 
-    <div class="row g-3">
-        <div class="col-md-6">
-            <label for="warga_id" class="form-label">Warga</label>
-            <select name="warga_id" id="warga_id" class="@error('warga_id') is-invalid @enderror" required>
-                @foreach ($wargas as $warga)
-                    <option value="{{ $warga->id }}" {{ old('warga_id', $pemeriksaan->warga_id ?? '') == $warga->id ? 'selected' : '' }}>
-                        {{ $warga->nama }} - {{ $warga->nik }}
-                    </option>
-                @endforeach
-            </select>
+    {{-- Informasi Pemeriksaan --}}
+    <div class="rounded-2xl border border-[#DAF1DE] bg-white p-5 shadow-2xs">
+        <h3 class="mb-4 text-base font-extrabold text-[#051F20] flex items-center gap-2 border-b border-[#DAF1DE] pb-2.5">
+            <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-[#DAF1DE] text-xs font-bold text-[#0B2B26]">1</span>
+            Informasi Pemeriksaan
+        </h3>
 
-            @error('warga_id')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="col-md-6">
-            <label for="jadwal_id" class="form-label">Jadwal</label>
-            <select name="jadwal_id" id="jadwal_id" required>
-                <option value=""></option>
-
-                @foreach ($jadwals as $jadwal)
-                    <option value="{{ $jadwal->id }}" {{ old('jadwal_id', $pemeriksaan->jadwal_id ?? '') == $jadwal->id ? 'selected' : '' }}>
-                        {{ $jadwal->tanggal?->format('d/m/Y') }} · {{ $jadwal->lokasi ?? 'Lokasi tidak tersedia' }}
-                    </option>
-                @endforeach
-            </select>
-
-            @error('jadwal_id')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="col-md-6">
-            <label for="pemeriksa_id" class="form-label">Pemeriksa</label>
-            <select name="pemeriksa_id" id="pemeriksa_id" required>
-                <option value=""></option>
-
-                @foreach ($users as $user)
-                    <option value="{{ $user->id }}" {{ old('pemeriksa_id', $pemeriksaan->pemeriksa_id ?? '') == $user->id ? 'selected' : '' }}>
-                        {{ $user->name }}
-                    </option>
-                @endforeach
-            </select>
-
-            @error('pemeriksa_id')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="col-md-6">
-            <label for="tanggal" class="form-label">Tanggal Pemeriksaan</label>
-            <input
-                type="date"
-                name="tanggal"
-                id="tanggal"
-                class="form-control @error('tanggal') is-invalid @enderror"
-                value="{{ old('tanggal', isset($pemeriksaan->tanggal) ? $pemeriksaan->tanggal->format('Y-m-d') : '') }}"
-                required
-            >
-
-            @error('tanggal')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-    </div>
-</div>
-
-<div class="form-section">
-    <div class="form-section-title">
-        <span>Hasil Pengukuran</span>
-    </div>
-
-    <div class="row g-3">
-        <div class="col-md-6">
-            <label for="berat_badan" class="form-label">
-                Berat Badan <small>(kg)</small>
-            </label>
-
-            <div class="input-unit">
-                <input
-                    type="number"
-                    step="0.01"
-                    name="berat_badan"
-                    id="berat_badan"
-                    class="form-control"
-                    placeholder="Contoh: 55"
-                    value="{{ old('berat_badan', $pemeriksaan->berat_badan ?? '') }}"
-                >
-                <span>kg</span>
+        <div class="grid gap-5 md:grid-cols-2">
+            <div>
+                <label for="warga_id" class="input-label">Warga</label>
+                <select name="warga_id" id="warga_id" class="input-field mt-1.5" required>
+                    <option value="">-- Pilih Warga --</option>
+                    @foreach ($wargas as $warga)
+                        <option value="{{ $warga->id }}" {{ old('warga_id', $pemeriksaan->warga_id ?? '') == $warga->id ? 'selected' : '' }}>
+                            {{ $warga->nama }} - NIK: {{ $warga->nik }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('warga_id') <p class="mt-1 text-xs font-semibold text-rose-600">{{ $message }}</p> @enderror
             </div>
-        </div>
 
-        <div class="col-md-6">
-            <label for="tinggi_badan" class="form-label">
-                Tinggi Badan <small>(cm)</small>
-            </label>
-
-            <div class="input-unit">
-                <input
-                    type="number"
-                    step="0.01"
-                    name="tinggi_badan"
-                    id="tinggi_badan"
-                    class="form-control"
-                    placeholder="Contoh: 165"
-                    value="{{ old('tinggi_badan', $pemeriksaan->tinggi_badan ?? '') }}"
-                >
-                <span>cm</span>
+            <div>
+                <label for="jadwal_id" class="input-label">Jadwal Posyandu</label>
+                <select name="jadwal_id" id="jadwal_id" class="input-field mt-1.5" required>
+                    <option value="">-- Pilih Jadwal --</option>
+                    @foreach ($jadwals as $jadwal)
+                        <option value="{{ $jadwal->id }}" {{ old('jadwal_id', $pemeriksaan->jadwal_id ?? '') == $jadwal->id ? 'selected' : '' }}>
+                            {{ $jadwal->tanggal?->format('d/m/Y') }} · {{ $jadwal->lokasi ?? 'Balai Desa' }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('jadwal_id') <p class="mt-1 text-xs font-semibold text-rose-600">{{ $message }}</p> @enderror
             </div>
-        </div>
 
-        <div class="col-md-6">
-            <label for="lingkar_kepala" class="form-label">
-                Lingkar Kepala <small>(cm)</small>
-            </label>
-
-            <div class="input-unit">
-                <input
-                    type="number"
-                    step="0.01"
-                    name="lingkar_kepala"
-                    id="lingkar_kepala"
-                    class="form-control"
-                    placeholder="Contoh: 54"
-                    value="{{ old('lingkar_kepala', $pemeriksaan->lingkar_kepala ?? '') }}"
-                >
-                <span>cm</span>
+            <div>
+                <label for="pemeriksa_id" class="input-label">Pemeriksa / Kader</label>
+                <select name="pemeriksa_id" id="pemeriksa_id" class="input-field mt-1.5" required>
+                    <option value="">-- Pilih Pemeriksa --</option>
+                    @foreach ($users as $user)
+                        <option value="{{ $user->id }}" {{ old('pemeriksa_id', $pemeriksaan->pemeriksa_id ?? '') == $user->id ? 'selected' : '' }}>
+                            {{ $user->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('pemeriksa_id') <p class="mt-1 text-xs font-semibold text-rose-600">{{ $message }}</p> @enderror
             </div>
-        </div>
 
-        <div class="col-md-6">
-            <label for="lingkar_lengan" class="form-label">
-                Lingkar Lengan <small>(cm)</small>
-            </label>
-
-            <div class="input-unit">
+            <div>
+                <label for="tanggal" class="input-label">Tanggal Pemeriksaan</label>
                 <input
-                    type="number"
-                    step="0.01"
-                    name="lingkar_lengan"
-                    id="lingkar_lengan"
-                    class="form-control"
-                    placeholder="Contoh: 25"
-                    value="{{ old('lingkar_lengan', $pemeriksaan->lingkar_lengan ?? '') }}"
+                    type="date"
+                    name="tanggal"
+                    id="tanggal"
+                    class="input-field mt-1.5"
+                    value="{{ old('tanggal', isset($pemeriksaan->tanggal) ? $pemeriksaan->tanggal->format('Y-m-d') : date('Y-m-d')) }}"
+                    required
                 >
-                <span>cm</span>
+                @error('tanggal') <p class="mt-1 text-xs font-semibold text-rose-600">{{ $message }}</p> @enderror
             </div>
         </div>
     </div>
-</div>
 
-<div class="form-section">
-    <div class="form-section-title">
-        <span>Kondisi Kesehatan</span>
-    </div>
+    {{-- Hasil Pengukuran --}}
+    <div class="rounded-2xl border border-[#DAF1DE] bg-white p-5 shadow-2xs">
+        <h3 class="mb-4 text-base font-extrabold text-[#051F20] flex items-center gap-2 border-b border-[#DAF1DE] pb-2.5">
+            <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-[#DAF1DE] text-xs font-bold text-[#0B2B26]">2</span>
+            Hasil Pengukuran Fisik
+        </h3>
 
-    <div class="row g-3">
-        <div class="col-md-6">
-            <label for="tekanan_darah" class="form-label">
-                Tekanan Darah <small>(mmHg)</small>
-            </label>
+        <div class="grid gap-5 md:grid-cols-2">
+            <div>
+                <label for="berat_badan" class="input-label">Berat Badan (kg)</label>
+                <div class="relative mt-1.5">
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="berat_badan"
+                        id="berat_badan"
+                        class="input-field pr-12"
+                        placeholder="Contoh: 15.5"
+                        value="{{ old('berat_badan', $pemeriksaan->berat_badan ?? '') }}"
+                    >
+                    <span class="pointer-events-none absolute right-3.5 top-2.5 text-xs font-bold text-[#7FA08C]">kg</span>
+                </div>
+            </div>
 
-            <div class="input-unit">
-                <input
-                    type="text"
-                    name="tekanan_darah"
-                    id="tekanan_darah"
-                    class="form-control"
-                    placeholder="Contoh: 120/80"
-                    value="{{ old('tekanan_darah', $pemeriksaan->tekanan_darah ?? '') }}"
-                >
-                <span>mmHg</span>
+            <div>
+                <label for="tinggi_badan" class="input-label">Tinggi / Panjang Badan (cm)</label>
+                <div class="relative mt-1.5">
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="tinggi_badan"
+                        id="tinggi_badan"
+                        class="input-field pr-12"
+                        placeholder="Contoh: 95.0"
+                        value="{{ old('tinggi_badan', $pemeriksaan->tinggi_badan ?? '') }}"
+                    >
+                    <span class="pointer-events-none absolute right-3.5 top-2.5 text-xs font-bold text-[#7FA08C]">cm</span>
+                </div>
+            </div>
+
+            <div>
+                <label for="lingkar_kepala" class="input-label">Lingkar Kepala (cm)</label>
+                <div class="relative mt-1.5">
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="lingkar_kepala"
+                        id="lingkar_kepala"
+                        class="input-field pr-12"
+                        placeholder="Contoh: 48.0"
+                        value="{{ old('lingkar_kepala', $pemeriksaan->lingkar_kepala ?? '') }}"
+                    >
+                    <span class="pointer-events-none absolute right-3.5 top-2.5 text-xs font-bold text-[#7FA08C]">cm</span>
+                </div>
+            </div>
+
+            <div>
+                <label for="lingkar_lengan" class="input-label">Lingkar Lengan Atas / LiLA (cm)</label>
+                <div class="relative mt-1.5">
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="lingkar_lengan"
+                        id="lingkar_lengan"
+                        class="input-field pr-12"
+                        placeholder="Contoh: 14.5"
+                        value="{{ old('lingkar_lengan', $pemeriksaan->lingkar_lengan ?? '') }}"
+                    >
+                    <span class="pointer-events-none absolute right-3.5 top-2.5 text-xs font-bold text-[#7FA08C]">cm</span>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div class="col-md-6">
-            <label for="gula_darah" class="form-label">
-                Gula Darah <small>(mg/dL)</small>
-            </label>
+    {{-- Kondisi Kesehatan & Status --}}
+    <div class="rounded-2xl border border-[#DAF1DE] bg-white p-5 shadow-2xs">
+        <h3 class="mb-4 text-base font-extrabold text-[#051F20] flex items-center gap-2 border-b border-[#DAF1DE] pb-2.5">
+            <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-[#DAF1DE] text-xs font-bold text-[#0B2B26]">3</span>
+            Kondisi Kesehatan & Status Gizi
+        </h3>
 
-            <div class="input-unit">
-                <input
-                    type="number"
-                    step="0.01"
-                    name="gula_darah"
-                    id="gula_darah"
-                    class="form-control"
-                    placeholder="Contoh: 100"
-                    value="{{ old('gula_darah', $pemeriksaan->gula_darah ?? '') }}"
-                >
-                <span>mg/dL</span>
+        <div class="grid gap-5 md:grid-cols-3">
+            <div>
+                <label for="tekanan_darah" class="input-label">Tekanan Darah (mmHg)</label>
+                <div class="relative mt-1.5">
+                    <input
+                        type="text"
+                        name="tekanan_darah"
+                        id="tekanan_darah"
+                        class="input-field pr-16"
+                        placeholder="Contoh: 120/80"
+                        value="{{ old('tekanan_darah', $pemeriksaan->tekanan_darah ?? '') }}"
+                    >
+                    <span class="pointer-events-none absolute right-3 top-2.5 text-xs font-bold text-[#7FA08C]">mmHg</span>
+                </div>
+            </div>
+
+            <div>
+                <label for="gula_darah" class="input-label">Gula Darah (mg/dL)</label>
+                <div class="relative mt-1.5">
+                    <input
+                        type="number"
+                        step="0.01"
+                        name="gula_darah"
+                        id="gula_darah"
+                        class="input-field pr-16"
+                        placeholder="Contoh: 100"
+                        value="{{ old('gula_darah', $pemeriksaan->gula_darah ?? '') }}"
+                    >
+                    <span class="pointer-events-none absolute right-3 top-2.5 text-xs font-bold text-[#7FA08C]">mg/dL</span>
+                </div>
+            </div>
+
+            <div>
+                <label for="status_gizi" class="input-label">Status Gizi</label>
+                <select name="status_gizi" id="status_gizi" class="input-field mt-1.5">
+                    <option value="">-- Pilih Status Gizi --</option>
+                    @foreach (['Sangat Kurus', 'Kurus', 'Normal', 'Gemuk', 'Obesitas', 'Gizi Baik', 'Gizi Kurang', 'Risiko Stunting'] as $status)
+                        <option value="{{ $status }}" {{ old('status_gizi', $pemeriksaan->status_gizi ?? '') == $status ? 'selected' : '' }}>
+                            {{ $status }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
         </div>
-
-        <div class="col-md-6">
-            <label for="status_gizi" class="form-label">
-                Status Gizi
-            </label>
-
-            <select name="status_gizi" id="status_gizi">
-                <option value=""></option>
-
-                @foreach (['Sangat Kurus', 'Kurus', 'Normal', 'Gemuk', 'Obesitas'] as $status)
-                    <option value="{{ $status }}" {{ old('status_gizi', $pemeriksaan->status_gizi ?? '') == $status ? 'selected' : '' }}>
-                        {{ $status }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-    </div>
-</div>
-
-<div class="form-section">
-    <div class="form-section-title">
-        <span>Keluhan & Catatan</span>
     </div>
 
-    <div class="row g-3">
-        <div class="col-md-6">
-            <label for="keluhan" class="form-label">
-                Keluhan
-            </label>
+    {{-- Keluhan & Catatan --}}
+    <div class="rounded-2xl border border-[#DAF1DE] bg-white p-5 shadow-2xs">
+        <h3 class="mb-4 text-base font-extrabold text-[#051F20] flex items-center gap-2 border-b border-[#DAF1DE] pb-2.5">
+            <span class="flex h-6 w-6 items-center justify-center rounded-lg bg-[#DAF1DE] text-xs font-bold text-[#0B2B26]">4</span>
+            Keluhan & Catatan Tambahan
+        </h3>
 
-            <textarea
-                name="keluhan"
-                id="keluhan"
-                rows="4"
-                class="form-control"
-                placeholder="Tuliskan keluhan warga jika ada..."
-            >{{ old('keluhan', $pemeriksaan->keluhan ?? '') }}</textarea>
-        </div>
+        <div class="grid gap-5 md:grid-cols-2">
+            <div>
+                <label for="keluhan" class="input-label">Keluhan Warga</label>
+                <textarea
+                    name="keluhan"
+                    id="keluhan"
+                    rows="3"
+                    class="input-field mt-1.5"
+                    placeholder="Tuliskan keluhan yang disampaikan..."
+                >{{ old('keluhan', $pemeriksaan->keluhan ?? '') }}</textarea>
+            </div>
 
-        <div class="col-md-6">
-            <label for="catatan" class="form-label">
-                Catatan
-            </label>
-
-            <textarea
-                name="catatan"
-                id="catatan"
-                rows="4"
-                class="form-control"
-                placeholder="Tambahkan catatan pemeriksaan..."
-            >{{ old('catatan', $pemeriksaan->catatan ?? '') }}</textarea>
+            <div>
+                <label for="catatan" class="input-label">Catatan & Tindakan Kader</label>
+                <textarea
+                    name="catatan"
+                    id="catatan"
+                    rows="3"
+                    class="input-field mt-1.5"
+                    placeholder="Tuliskan saran atau rujukan..."
+                >{{ old('catatan', $pemeriksaan->catatan ?? '') }}</textarea>
+            </div>
         </div>
     </div>
+
 </div>
