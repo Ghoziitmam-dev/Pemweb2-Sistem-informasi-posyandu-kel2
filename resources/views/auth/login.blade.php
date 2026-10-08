@@ -66,8 +66,11 @@
                 } finally { this.loading = false; }
             }
           }"
-        x-init="if (auth.token()) syncSession().then(() => window.location.href = '/jadwal')"
+          x-init="if (auth.token()) syncSession().then(() => window.location.href = '/jadwal')">
+
+        {{-- Pembungkus: semua isi form HARUS di dalam div ini --}}
         <div class="w-full max-w-sm">
+
             <a href="{{ route('home') }}" class="mb-8 flex items-center gap-2 font-bold text-[#0B2B26] lg:hidden">
                 <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#235347] text-white">P</span>
                 Posyandu Digital
@@ -107,6 +110,7 @@
             <p class="mt-6 text-center text-sm text-[#163832]">
                 Warga baru? <a href="{{ route('register') }}" class="font-semibold text-[#235347] underline underline-offset-2 hover:text-[#0B2B26]">Daftar dengan NIK</a>
             </p>
+
         </div>
     </main>
 </div>
