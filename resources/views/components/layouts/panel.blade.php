@@ -70,11 +70,10 @@
         </button>
 
         <!-- Brand Logo -->
-        <a href="{{ route('jadwal.index') }}" class="flex shrink-0 items-center gap-2.5 group">
+        <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-2.5 group">
             <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0B2B26] text-lg font-bold text-[#DAF1DE] shadow-xs transition-transform group-hover:scale-105">P</span>
             <span class="text-base font-extrabold tracking-tight text-[#051F20]">Posyandu</span>
         </a>
-
         <!-- Desktop Navigation Menu -->
         <nav class="hidden flex-1 items-center gap-1.5 md:flex ml-4">
             <template x-for="(m, i) in menu" :key="i">
