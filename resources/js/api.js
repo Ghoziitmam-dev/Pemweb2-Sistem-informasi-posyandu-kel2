@@ -5,7 +5,25 @@ export const auth = {
     set: (t) => localStorage.setItem(TOKEN_KEY, t),
     clear: () => localStorage.removeItem(TOKEN_KEY),
 };
+window.syncSession = async () => {
+    try {
+        await fetch('/session-sync', {
+            method: 'POST',
+            headers: { Authorization: 'Bearer ' + auth.token(), Accept: 'application/json' },
+            credentials: 'same-origin',
+        });
+    } catch (e) { }
+};
 
+window.endSession = async () => {
+    try {
+        await fetch('/session-sync', {
+            method: 'DELETE',
+            headers: { Authorization: 'Bearer ' + auth.token(), Accept: 'application/json' },
+            credentials: 'same-origin',
+        });
+    } catch (e) { }
+};
 export async function api(path, { method = 'GET', body, params } = {}) {
     const url = new URL('/api' + path, window.location.origin);
     Object.entries(params ?? {}).forEach(([k, v]) => {

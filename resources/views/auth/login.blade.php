@@ -59,14 +59,14 @@
                         return;
                     }
                     auth.set(json.data.token);
+                    await syncSession();
                     window.location.href = '/jadwal';
                 } catch (e) {
                     this.error = 'Tidak dapat terhubung ke server.';
                 } finally { this.loading = false; }
             }
           }"
-          x-init="if (auth.token()) window.location.href = '/jadwal'">
-
+        x-init="if (auth.token()) syncSession().then(() => window.location.href = '/jadwal')"
         <div class="w-full max-w-sm">
             <a href="{{ route('home') }}" class="mb-8 flex items-center gap-2 font-bold text-[#0B2B26] lg:hidden">
                 <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#235347] text-white">P</span>

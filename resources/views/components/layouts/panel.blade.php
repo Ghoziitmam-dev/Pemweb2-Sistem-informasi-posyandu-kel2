@@ -42,6 +42,7 @@
         },
         async logout(){
             try { await api('/auth/logout',{method:'POST'}); } catch(e){}
+            await endSession();
             if(window.auth && window.auth.clear) window.auth.clear();
             if(window.clearMeCache) window.clearMeCache();
             window.location.href='/login';

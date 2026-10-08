@@ -1,11 +1,12 @@
 <?php
 
 use App\Models\{Jadwal, Kegiatan, Warga};
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Api\JadwalController;
 use App\Http\Controllers\KegiatanController;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     $jadwals = Jadwal::with('kegiatan')
@@ -26,9 +27,6 @@ Route::get('/', function () {
 
     return view('welcome', compact('jadwals', 'stat'));
 })->name('home');
-
-Route::resource('jadwal', JadwalController::class)
-    ->only(['index', 'show']);
 
 Route::view('/login', 'auth.login')->name('login');
 Route::view('/register', 'auth.register')->name('register');
@@ -54,6 +52,24 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
 });
+Route::middleware('auth:sanctum')
+    ->withoutMiddleware(ValidateCsrfToken::class) // aman: autentikasinya bearer token, bukan cookie
+    ->group(function () {
+        Route::post('/session-sync', function (Request $request) {
+            Auth::guard('web')->login($request->user());
+            $request->session()->regenerate();
+
+            return response()->noContent();
+        });
+
+        Route::delete('/session-sync', function (Request $request) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return response()->noContent();
+        });
+    });
 
 require __DIR__.'/web/warga.php';
 require __DIR__.'/web/kegiatan.php';

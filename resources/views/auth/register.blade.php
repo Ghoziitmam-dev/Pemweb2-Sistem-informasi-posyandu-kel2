@@ -35,13 +35,14 @@
                     return;
                 }
                 auth.set(json.data.token);
+                await syncSession();
                 window.location.href = '/jadwal';
             } catch (e) {
                 this.error = 'Tidak dapat terhubung ke server.';
             } finally { this.loading = false; }
         }
      }"
-     x-init="if (auth.token()) window.location.href = '/jadwal'">
+     x-init="if (auth.token()) syncSession().then(() => window.location.href = '/jadwal')"
 
     <div class="mb-6 text-center">
         <span class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-600 text-2xl font-bold text-white">P</span>
